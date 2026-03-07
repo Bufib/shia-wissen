@@ -5,13 +5,13 @@ import debounce from "lodash.debounce";
 import {
   checkInternetConnection,
   setupConnectivityListener,
-} from "@/utils/checkNetwork";
-import handleOpenExternalUrl from "@/utils/handleOpenExternalUrl";
-import { getQuestionCount } from "@/db/queries/questions";
-import { whenDatabaseReady, safeInitializeDatabase } from "@/db";
-import { runDatabaseSync } from "@/db/runDatabaseSync";
-import { fetchAppVersionFromSupabase } from "@/db/sync/versions";
-import { supabase } from "@/utils/supabase";
+} from "../utils/checkNetwork";
+import handleOpenExternalUrl from "../utils/handleOpenExternalUrl";
+import { getQuestionCount } from "../db/queries/questions";
+import { whenDatabaseReady, safeInitializeDatabase } from "../db";
+import { runDatabaseSync } from "../db/runDatabaseSync";
+import { fetchAppVersionFromSupabase } from "../db/sync/versions";
+import { supabase } from "../utils/supabase";
 import {
   databaseUpdateCalendar,
   databaseUpdatePrayer,

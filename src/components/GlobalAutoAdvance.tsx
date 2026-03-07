@@ -42,7 +42,7 @@
 
 // /player/GlobalAutoAdvance.tsx
 import React from "react";
-import { globalPlayer, useGlobalPlayer } from "@/player/useGlobalPlayer";
+import { globalPlayer, useGlobalPlayer } from "../../player/useGlobalPlayer";
 
 /**
  * Root-mounted watcher that advances to the next verse when the current one ends.

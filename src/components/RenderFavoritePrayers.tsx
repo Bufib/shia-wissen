@@ -14,7 +14,7 @@ import {
   getFavoritePrayersForFolder,
   getFavoritePrayerFolders,
   removeFolder,
-} from "@/db/queries/prayers";
+} from "../../db/queries/prayers";
 import { FavoritePrayerFolderType, PrayerType } from "@/constants/Types";
 import { router, useFocusEffect } from "expo-router";
 import { Colors } from "@/constants/Colors";
@@ -22,7 +22,7 @@ import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { AntDesign, Entypo } from "@expo/vector-icons";
-import { useDataVersionStore } from "@/stores/dataVersionStore";
+import { useDataVersionStore } from "../../stores/dataVersionStore";
 
 const RenderFavoritePrayers: React.FC = () => {
   const { t } = useTranslation();

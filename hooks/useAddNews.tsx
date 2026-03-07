@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import { useForm } from "react-hook-form";
 import * as ImagePicker from "expo-image-picker";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "../utils/supabase";
 import { decode } from "base64-arraybuffer";
 import { router } from "expo-router";
 import { newsAddedSuccessToast } from "@/constants/messages";

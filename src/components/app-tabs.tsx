@@ -1,37 +1,3 @@
-// import { NativeTabs } from 'expo-router/unstable-native-tabs';
-// import React from 'react';
-// import { useColorScheme } from 'react-native';
-
-// import { Colors } from '@/constants/theme';
-
-// export default function AppTabs() {
-//   const scheme = useColorScheme();
-//   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
-
-//   return (
-//     <NativeTabs
-//       backgroundColor={colors.background}
-//       indicatorColor={colors.backgroundElement}
-//       labelStyle={{ selected: { color: colors.text } }}>
-//       <NativeTabs.Trigger name="index">
-//         <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-//         <NativeTabs.Trigger.Icon
-//           src={require('@/assets/images/tabIcons/home.png')}
-//           renderingMode="template"
-//         />
-//       </NativeTabs.Trigger>
-
-//       <NativeTabs.Trigger name="explore">
-//         <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
-//         <NativeTabs.Trigger.Icon
-//           src={require('@/assets/images/tabIcons/explore.png')}
-//           renderingMode="template"
-//         />
-//       </NativeTabs.Trigger>
-//     </NativeTabs>
-//   );
-// }
-
 import React from "react";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 
@@ -52,7 +18,7 @@ export default function TabLayout() {
         default: { color: Colors[colorScheme].text },
       }}
     >
-      <NativeTabs.Trigger name="home">
+      <NativeTabs.Trigger name="home" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t("home")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           // iOS (SF Symbols)
@@ -63,7 +29,7 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="knowledge">
+      <NativeTabs.Trigger name="knowledge" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t("knowledge")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf="book"
@@ -72,7 +38,7 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="search">
+      <NativeTabs.Trigger name="search" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t("search")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf="magnifyingglass"
@@ -81,12 +47,12 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="favorites">
+      <NativeTabs.Trigger name="favorites" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t("favorites")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="star" md="star" renderingMode="template" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="settings">
+      <NativeTabs.Trigger name="settings" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t("settings")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf="gear.circle"

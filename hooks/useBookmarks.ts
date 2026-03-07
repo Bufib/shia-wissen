@@ -4,10 +4,10 @@ import { useCallback } from "react";
 import { Alert } from "react-native";
 import { useTranslation } from "react-i18next";
 import { LanguageCode, QuranVerseType } from "@/constants/Types";
-import { getSurahDisplayName } from "@/db/queries/quran";
-import { getJuzPosForVerse, getPagePosForVerse } from "@/utils/quranIndex";
-import { useReadingProgressQuran } from "@/stores/useReadingProgressQuran";
-import { getBookmarkDetailKey, getBookmarksKey } from "@/stores/suraStore";
+import { getSurahDisplayName } from "../db/queries/quran";
+import { getJuzPosForVerse, getPagePosForVerse } from "../utils/quranIndex";
+import { useReadingProgressQuran } from "../stores/useReadingProgressQuran";
+import { getBookmarkDetailKey, getBookmarksKey } from "../stores/suraStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface UseBookmarksParams {

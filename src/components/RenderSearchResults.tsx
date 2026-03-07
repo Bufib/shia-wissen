@@ -33,15 +33,15 @@ import {
   searchQuran,
   searchQuestions,
   type PagedResult,
-} from "@/db/search";
-import { useSearchPodcasts } from "@/hooks/useSearchPodcasts";
-import { useSearchNewsArticles } from "@/hooks/useSearchNewsArticles";
-import { useSearchPdfs } from "@/hooks/useSearchPdfs";
+} from "../../db/search";
+import { useSearchPodcasts } from "../../hooks/useSearchPodcasts";
+import { useSearchNewsArticles } from "../../hooks/useSearchNewsArticles";
+import { useSearchPdfs } from "../../hooks/useSearchPdfs";
 import { ThemedText } from "./ThemedText";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import HtmlRenderer from "./RenderHTML";
-import { useScreenFadeIn } from "@/hooks/useScreenFadeIn";
+import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
 import { LoadingIndicator } from "./LoadingIndicator";
 
 type TabType = "quran" | "questions" | "prayers" | "podcasts" | "news" | "pdfs";

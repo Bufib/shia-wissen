@@ -15,7 +15,11 @@
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to select images.",
         "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": ["de", "en", "ar"],
+        "CFBundleLocalizations": [
+          "de",
+          "en",
+          "ar"
+        ],
         "CFBundleDevelopmentRegion": "de",
         "NSUserNotificationsUsageDescription": "Wir senden Push-Benachrichtigungen"
       }
@@ -57,11 +61,20 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-image",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f7894541-7316-4c28-a215-1c14c4f02f04"
+      }
     }
   }
 }

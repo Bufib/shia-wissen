@@ -1,5 +1,5 @@
 import { DatasetVersionsType } from "@/constants/Types";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "../../utils/supabase";
 
 /**
  * Get the latest per-dataset versions from the `versions` table.
