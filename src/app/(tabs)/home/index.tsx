@@ -12,16 +12,19 @@ import {
   PodcastType,
   PdfType,
   NewsCardType,
+  CalendarType,
 } from "@/constants/Types";
 import { useLanguage } from "../../../../contexts/LanguageContext";
 import { useNews } from "../../../../hooks/useNews";
 import { useNewsArticles } from "../../../../hooks/useNewsArticles";
 import { usePodcasts } from "../../../../hooks/usePodcasts";
 import { useAuthStore } from "../../../../stores/authStore";
+import { useDataVersionStore } from "../../../../stores/dataVersionStore";
+import { getAllCalendarDates } from "../../../../db/queries/calendar";
 import handleOpenExternalUrl from "../../../../utils/handleOpenExternalUrl";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useMemo, useRef, useState, useCallback } from "react";
+import React, { useMemo, useRef, useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FlatList,
@@ -36,7 +39,7 @@ import {
   useWindowDimensions,
   ScrollView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
@@ -64,6 +67,7 @@ export default function HomeScreen() {
   const { t } = useTranslation();
   const { lang } = useLanguage();
   const { fadeAnim, onLayout } = useScreenFadeIn(800);
+  const insets = useSafeAreaInsets();
   const isAdmin = useAuthStore((state) => state.isAdmin);
   const { width, height } = useWindowDimensions();
   const { previewSizes, fontsizeHomeShowAll, fontsizeHomeHeaders } = returnSize(
@@ -119,6 +123,59 @@ export default function HomeScreen() {
   const articles: NewsArticlesType[] = newsArticlesData?.pages.flat() ?? [];
   const podcasts: PodcastType[] = podcastPages?.pages.flat() ?? [];
   const pdfs: PdfType[] = pdfPages?.pages.flat() ?? [];
+
+  // Calendar event (today or next upcoming)
+  const calendarVersion = useDataVersionStore((s) => s.calendarVersion);
+  const [calendarEvent, setCalendarEvent] = useState<CalendarType | null>(null);
+  const [calendarEventDiff, setCalendarEventDiff] = useState<number>(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const events = await getAllCalendarDates(lang);
+        if (cancelled) return;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const getDiff = (dateStr: string) => {
+          const [year, month, day] = dateStr.split("-").map(Number);
+          const d = new Date(year, month - 1, day);
+          return Math.round((d.getTime() - today.getTime()) / 86400000);
+        };
+
+        // Find today's event first, then next upcoming
+        let found: CalendarType | null = null;
+        let foundDiff = 0;
+        let minPosDiff: number | null = null;
+
+        for (const e of events) {
+          const d = getDiff(e.gregorian_date);
+          if (d > 0 && (minPosDiff === null || d < minPosDiff)) minPosDiff = d;
+        }
+
+        for (const e of events) {
+          const d = getDiff(e.gregorian_date);
+          if (d === 0) {
+            found = e;
+            foundDiff = 0;
+            break;
+          }
+          if (minPosDiff !== null && d === minPosDiff && !found) {
+            found = e;
+            foundDiff = d;
+          }
+        }
+
+        setCalendarEvent(found);
+        setCalendarEventDiff(foundDiff);
+      } catch {
+        // silently fail — calendar is supplementary
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [calendarVersion, lang]);
   // Bottom sheet
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [activeSheet, setActiveSheet] = useState<ActiveSheet>(null);
@@ -438,7 +495,7 @@ export default function HomeScreen() {
           styles.container,
           { backgroundColor: Colors[colorScheme].background },
         ]}
-        edges={["top"]}
+        edges={["bottom"]}
       >
         <Animated.ScrollView
           onLayout={onLayout}
@@ -552,128 +609,198 @@ export default function HomeScreen() {
             </View>
           )} */}
 
-          {/* News */}
+          {/* Aktuelles — hero card */}
           <View style={styles.newsContainer}>
-            <View style={styles.newsTitleContainer}>
-              <ThemedText
-                type="titleBiggerLessBold"
+            <View
+              style={[
+                styles.heroCard,
+                {
+                  backgroundColor: Colors[colorScheme].background,
+                },
+              ]}
+            >
+              {/* Colored header: title + calendar */}
+              <View
                 style={[
-                  {
-                    paddingBottom: 3,
-                    lineHeight: 40,
-                    marginHorizontal: 16,
-                    fontSize: fontsizeHomeHeaders,
-                  },
-                  styles.titleShadow,
-                ]}
-              >
-                {t("newsTitle")}
-              </ThemedText>
-              {isAdmin && (
-                <Ionicons
-                  name="add-circle-outline"
-                  size={35}
-                  color={Colors[colorScheme].defaultIcon}
-                  onPress={() => router.push("/(addNews)")}
-                />
-              )}
-            </View>
-
-            {showUpdateButton && (
-              <TouchableOpacity
-                style={[
-                  styles.updateButton,
+                  styles.heroHeader,
                   {
                     backgroundColor:
-                      colorScheme === "dark"
-                        ? Colors.universal.secondary
-                        : Colors.universal.primary,
+                      colorScheme === "dark" ? "#152C3E" : "#1A4731",
+                    paddingTop: insets.top + 18,
                   },
                 ]}
-                onPress={handleRefresh}
-                activeOpacity={0.8}
               >
-                <View style={styles.updateButtonContent}>
-                  <Ionicons
-                    name="refresh-circle"
-                    size={20}
-                    color="#fff"
-                    style={styles.updateButtonIcon}
-                  />
-                  <Text style={styles.updateButtonText}>
-                    {t("newNewsAvailable") ||
-                      "New items available - Tap to refresh"}
+                <View style={styles.heroTitleRow}>
+                  <Text
+                    style={[styles.heroTitle, { fontSize: fontsizeHomeHeaders }]}
+                  >
+                    {t("newsTitle")}
                   </Text>
+                  {isAdmin && (
+                    <Ionicons
+                      name="add-circle-outline"
+                      size={28}
+                      color="rgba(255,255,255,0.75)"
+                      onPress={() => router.push("/(addNews)")}
+                    />
+                  )}
                 </View>
-              </TouchableOpacity>
-            )}
 
-            {newsIsLoading && (
-              <LoadingIndicator style={{ marginVertical: 20 }} size="large" />
-            )}
-
-            {newsIsError && (
-              <View style={styles.errorContainer}>
-                <Text
-                  style={[
-                    styles.errorText,
-                    { color: Colors[colorScheme].error },
-                  ]}
-                >
-                  {newsError?.message ?? t("errorLoadingData")}
-                </Text>
-                <RetryButton onPress={handleRefresh} />
-              </View>
-            )}
-
-            {allNews.length === 0 && !newsIsLoading && (
-              <ThemedView style={styles.newsEmptyContainer}>
-                <ThemedText style={styles.newsEmptyText} type="subtitle">
-                  {t("newsEmpty")}
-                </ThemedText>
-              </ThemedView>
-            )}
-
-            {!newsIsLoading && !newsIsError && allNews.length > 0 && (
-              <ScrollView
-                contentContainerStyle={styles.newsContentContainer}
-                style={{ flex: 1 }}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-              >
-                {allNews.map((item) => (
-                  <NewsItem
-                    key={item.id.toString()}
-                    id={item.id}
-                    language_code={item.language_code}
-                    is_pinned={item.is_pinned}
-                    title={item.title}
-                    content={item.content}
-                    created_at={item.created_at}
-                    images_url={item.images_url}
-                    internal_urls={item.internal_urls}
-                    external_urls={item.external_urls}
-                  />
-                ))}
-
-                {newsHasNextPage && (
-                  <View style={styles.loadMoreContainer}>
-                    {newsIsFetchingNextPage ? (
-                      <LoadingIndicator size="small" />
-                    ) : (
-                      <TouchableOpacity
-                        onPress={handleLoadMore}
-                        style={styles.loadMoreButton}
-                      >
-                        <Text style={styles.loadMoreText}>
-                          {t("loadMore") || "Load More"}
+                {calendarEvent && (
+                  <TouchableOpacity
+                    style={styles.calendarBanner}
+                    onPress={() =>
+                      router.push(
+                        "/(tabs)/knowledge/calendar/indexCalendar" as any,
+                      )
+                    }
+                    activeOpacity={0.75}
+                  >
+                    {/* Left: text content */}
+                    <View style={styles.calendarBannerContent}>
+                      <View style={styles.calendarBannerTop}>
+                        <Ionicons
+                          name="moon-outline"
+                          size={11}
+                          color="rgba(255,255,255,0.55)"
+                        />
+                        <Text style={styles.calendarBannerLabel}>
+                          {t("calendarTitle").toUpperCase()}
                         </Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
+                        <View style={styles.calendarBadge}>
+                          <Text style={styles.calendarBadgeText}>
+                            {calendarEventDiff === 0
+                              ? t("legendToday")
+                              : t("countdownDaysToGo", {
+                                  count: calendarEventDiff,
+                                })}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={styles.calendarBannerTitle}
+                      >
+                        {calendarEvent.title}
+                      </Text>
+                    </View>
+                    {/* Right: chevron indicating tappable */}
+                    <View style={styles.calendarChevron}>
+                      <Ionicons
+                        name="chevron-forward"
+                        size={16}
+                        color="rgba(255,255,255,0.6)"
+                      />
+                    </View>
+                  </TouchableOpacity>
                 )}
-              </ScrollView>
-            )}
+              </View>
+
+              {/* Update button */}
+              {showUpdateButton && (
+                <TouchableOpacity
+                  style={[
+                    styles.updateButton,
+                    {
+                      backgroundColor:
+                        colorScheme === "dark"
+                          ? Colors.universal.secondary
+                          : Colors.universal.primary,
+                    },
+                  ]}
+                  onPress={handleRefresh}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.updateButtonContent}>
+                    <Ionicons
+                      name="refresh-circle"
+                      size={20}
+                      color="#fff"
+                      style={styles.updateButtonIcon}
+                    />
+                    <Text style={styles.updateButtonText}>
+                      {t("newNewsAvailable") ||
+                        "New items available - Tap to refresh"}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+
+              {/* Loading */}
+              {newsIsLoading && (
+                <LoadingIndicator
+                  style={{ marginVertical: 20 }}
+                  size="large"
+                />
+              )}
+
+              {/* Error */}
+              {newsIsError && (
+                <View style={styles.errorContainer}>
+                  <Text
+                    style={[
+                      styles.errorText,
+                      { color: Colors[colorScheme].error },
+                    ]}
+                  >
+                    {newsError?.message ?? t("errorLoadingData")}
+                  </Text>
+                  <RetryButton onPress={handleRefresh} />
+                </View>
+              )}
+
+              {/* Empty */}
+              {!newsIsLoading && allNews.length === 0 && (
+                <ThemedView style={styles.newsEmptyContainer}>
+                  <ThemedText style={styles.newsEmptyText} type="subtitle">
+                    {t("newsEmpty")}
+                  </ThemedText>
+                </ThemedView>
+              )}
+
+              {/* News scroll */}
+              {!newsIsLoading && !newsIsError && allNews.length > 0 && (
+                <ScrollView
+                  contentContainerStyle={styles.newsContentContainer}
+                  style={{ flex: 1 }}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {allNews.map((item) => (
+                    <NewsItem
+                      key={item.id.toString()}
+                      id={item.id}
+                      language_code={item.language_code}
+                      is_pinned={item.is_pinned}
+                      title={item.title}
+                      content={item.content}
+                      created_at={item.created_at}
+                      images_url={item.images_url}
+                      internal_urls={item.internal_urls}
+                      external_urls={item.external_urls}
+                    />
+                  ))}
+
+                  {newsHasNextPage && (
+                    <View style={styles.loadMoreContainer}>
+                      {newsIsFetchingNextPage ? (
+                        <LoadingIndicator size="small" />
+                      ) : (
+                        <TouchableOpacity
+                          onPress={handleLoadMore}
+                          style={styles.loadMoreButton}
+                        >
+                          <Text style={styles.loadMoreText}>
+                            {t("loadMore") || "Load More"}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
+                </ScrollView>
+              )}
+            </View>
           </View>
           {/* Podcasts */}
           {podcasts.length > 0 && (
@@ -977,7 +1104,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 10,
   },
   scrollStyles: {},
   scrollContent: {
@@ -994,6 +1120,79 @@ const styles = StyleSheet.create({
   pdfContainer: {
     flex: 1,
     gap: 15,
+  },
+  heroCard: {
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  heroHeader: {
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 20,
+    gap: 16,
+  },
+  heroTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  heroTitle: {
+    fontWeight: "800",
+    color: "#fff",
+    letterSpacing: -0.5,
+  },
+  calendarBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.15)",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    gap: 10,
+  },
+  calendarBannerContent: {
+    flex: 1,
+    gap: 5,
+  },
+  calendarChevron: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  calendarBannerTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  calendarBannerLabel: {
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 0.8,
+    flex: 1,
+    color: "rgba(255,255,255,0.55)",
+  },
+  calendarBannerTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    letterSpacing: -0.3,
+    color: "#fff",
+  },
+  calendarBadge: {
+    backgroundColor: "rgba(255,255,255,0.18)",
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+    borderRadius: 20,
+  },
+  calendarBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 0.3,
+    color: "#fff",
   },
   newsContainer: {
     flex: 1,
@@ -1033,10 +1232,10 @@ const styles = StyleSheet.create({
   },
   newsContentContainer: {
     flexDirection: "row",
-    gap: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    marginBottom: 5
+    gap: 16,
+    paddingHorizontal: 14,
+    paddingBottom: 16,
+    paddingTop: 14,
   },
   titleShadow: {
     shadowOffset: { width: 0, height: 1 },

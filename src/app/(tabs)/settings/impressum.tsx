@@ -46,7 +46,7 @@ export default function Impressum() {
   const { t } = useTranslation();
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+    <SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
       <ScrollView
         style={[
           styles.scrollStyle,

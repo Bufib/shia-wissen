@@ -77,116 +77,116 @@ export const NewsItem = ({
         },
       ]}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-        }}
-      >
-        {title && title.trim() !== "" && (
+      {/* Content grows to fill available space, pushing date to bottom */}
+      <View style={styles.newsItemContent}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
+          {title && title.trim() !== "" && (
+            <ThemedText
+              style={[styles.newsTitle, { textAlign: rtl ? "right" : "left" }]}
+              type="defaultSemiBold"
+            >
+              {title}
+            </ThemedText>
+          )}
+          {is_pinned && (
+            <AntDesign
+              name="pushpin"
+              size={24}
+              color={colorScheme === "dark" ? "#2ea853" : "#057958"}
+              style={styles.pinIconStyle}
+            />
+          )}
+
+          {isAdmin && <NewsMenu id={id} is_pinned={is_pinned || false} />}
+        </View>
+
+        {content && content.trim() !== "" && (
           <ThemedText
-            style={[styles.newsTitle, { textAlign: rtl ? "right" : "left" }]}
-            type="defaultSemiBold"
+            style={[styles.newsContent, { textAlign: rtl ? "right" : "left" }]}
           >
-            {title}
+            {content}
           </ThemedText>
         )}
-        {is_pinned && (
-          <AntDesign
-            name="pushpin"
-            size={24}
-            color={colorScheme === "dark" ? "#2ea853" : "#057958"}
-            style={styles.pinIconStyle}
-          />
+
+        {external_urls && external_urls.length > 0 && (
+          <ThemedView style={styles.linksContainer}>
+            {external_urls.map((url, index) => (
+              <RenderLink
+                key={`external-url-${index}-${url}`}
+                url={url}
+                index={index}
+                isExternal={true}
+              />
+            ))}
+          </ThemedView>
         )}
 
-        {isAdmin && <NewsMenu id={id} is_pinned={is_pinned || false} />}
+        {internal_urls && internal_urls.length > 0 && (
+          <ThemedView style={styles.linksContainer}>
+            {internal_urls.map((url, index) => (
+              <RenderLink
+                key={`internal-url-${index}-${url}`}
+                url={url}
+                index={index}
+                isExternal={false}
+              />
+            ))}
+          </ThemedView>
+        )}
+        {images_url && images_url.length > 0 && (
+          <View>
+            <FlatList
+              ref={flatListRef}
+              data={images_url}
+              horizontal
+              scrollEnabled={images_url.length > 1}
+              pagingEnabled
+              decelerationRate="normal"
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handleScrollEnd}
+              keyExtractor={(item, index) => `${item}-${index}`}
+              renderItem={({ item }) => {
+                const imageHeight = imageDimensions[item] || availableWidth;
+                return (
+                  <View style={[styles.imageContainer, { height: imageHeight }]}>
+                    <Image
+                      source={{ uri: item }}
+                      style={[styles.image, { height: imageHeight }]}
+                      contentFit="cover"
+                      allowDownscaling={true}
+                      onLoad={(event) => handleImageLoad(item, event)}
+                    />
+                  </View>
+                );
+              }}
+            />
+            {images_url.length > 1 && (
+              <View style={styles.dotsContainer}>
+                {images_url.map((_, index) => (
+                  <Pressable key={index} onPress={() => handleDotPress(index)}>
+                    <View
+                      style={[
+                        styles.dot,
+                        currentPage === index
+                          ? styles.activeDot
+                          : styles.inactiveDot,
+                      ]}
+                    />
+                  </Pressable>
+                ))}
+              </View>
+            )}
+          </View>
+        )}
       </View>
 
-      {content && content.trim() !== "" && (
-        <ThemedText
-          style={[styles.newsContent, { textAlign: rtl ? "right" : "left" }]}
-        >
-          {content}
-        </ThemedText>
-      )}
-
-      {external_urls && external_urls.length > 0 && (
-        <ThemedView style={styles.linksContainer}>
-          {external_urls.map((url, index) => (
-            <RenderLink
-              key={`external-url-${index}-${url}`}
-              url={url}
-              index={index}
-              isExternal={true}
-            />
-          ))}
-        </ThemedView>
-      )}
-
-      {internal_urls && internal_urls.length > 0 && (
-        <ThemedView style={styles.linksContainer}>
-          {internal_urls.map((url, index) => (
-            <RenderLink
-              key={`internal-url-${index}-${url}`}
-              url={url}
-              index={index}
-              isExternal={false}
-            />
-          ))}
-        </ThemedView>
-      )}
-      {images_url && images_url.length > 0 && (
-        <View>
-          <FlatList
-            ref={flatListRef}
-            data={images_url}
-            horizontal
-            scrollEnabled={images_url.length > 1}
-            pagingEnabled
-            // snapToInterval={availableWidth}
-            // snapToAlignment="center"
-            // disableIntervalMomentum
-            decelerationRate="normal"
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={handleScrollEnd}
-            keyExtractor={(item, index) => `${item}-${index}`}
-            renderItem={({ item }) => {
-              const imageHeight = imageDimensions[item] || availableWidth;
-              return (
-                <View style={[styles.imageContainer, { height: imageHeight }]}>
-                  <Image
-                    source={{ uri: item }}
-                    style={[styles.image, { height: imageHeight }]}
-                    contentFit="cover"
-                    allowDownscaling={true}
-                    onLoad={(event) => handleImageLoad(item, event)}
-                  />
-                </View>
-              );
-            }}
-          />
-          {/* Dots Pagination */}
-          {images_url.length > 1 && (
-            <View style={styles.dotsContainer}>
-              {images_url.map((_, index) => (
-                <Pressable key={index} onPress={() => handleDotPress(index)}>
-                  <View
-                    style={[
-                      styles.dot,
-                      currentPage === index
-                        ? styles.activeDot
-                        : styles.inactiveDot,
-                    ]}
-                  />
-                </Pressable>
-              ))}
-            </View>
-          )}
-        </View>
-      )}
-
+      {/* Date always at the bottom */}
       <ThemedText
         style={[styles.newsDate, { textAlign: rtl ? "left" : "right" }]}
       >
@@ -210,6 +210,10 @@ const styles = StyleSheet.create({
     elevation: 2,
     width: 300,
     height: 180,
+    justifyContent: "space-between",
+  },
+  newsItemContent: {
+    flex: 1,
   },
 
   pinIconStyle: {},

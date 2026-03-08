@@ -8,7 +8,7 @@ const en = {
   errorLoadingArticle: "There was an error loading the article!",
 
   // News
-  newsTitle: "News",
+  newsTitle: "Latest",
   newsEmpty: "There are no news yet!",
   newNewsAvailable: "New news available!",
 
@@ -475,6 +475,7 @@ const en = {
 
   countdownToday: "Today!",
   countdownDaysToGo: "{{count}} days to go",
+  homeCalendarSectionTitle: "Islamic Calendar",
 
   // Quran
   basmala: "In the name of Allah, most benevolent, ever-merciful.",

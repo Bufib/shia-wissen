@@ -113,7 +113,7 @@ const Settings = () => {
           styles.container,
           { backgroundColor: Colors[colorScheme].background },
         ]}
-        edges={["top"]}
+        edges={["top", "bottom"]}
       >
         <View style={[styles.header, rtl && styles.rtl]}>
           <Pressable style={{ flex: 1 }} onPress={onSettingsHeaderPress}>

@@ -8,7 +8,7 @@ import indexQuestion from "@/app/(tabs)/knowledge/questions/indexQuestion";
 import indexQuran from "@/app/(tabs)/knowledge/quran/indexQuran";
 import indexCalandar from "@/app/(tabs)/knowledge/calendar/indexCalendar";
 import indexHistory from "@/app/(tabs)/knowledge/history/indexHistory";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
@@ -30,6 +30,7 @@ export default function TopNavigationKnowledge() {
   const setActiveTab = useKnowledgeTabStore((s) => s.setActiveTab);
   const colorScheme = useColorScheme() || "light";
   const { fadeAnim, onLayout } = useScreenFadeIn(800);
+  const insets = useSafeAreaInsets();
 
   const handleIndexChange = (newIndex: number) => {
     setIndex(newIndex);
@@ -78,6 +79,7 @@ export default function TopNavigationKnowledge() {
         flex: 1,
         opacity: fadeAnim,
         backgroundColor: Colors[colorScheme].background,
+        paddingBottom: insets.bottom,
       }}
     >
       <SafeAreaView

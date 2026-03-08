@@ -704,7 +704,7 @@ export default function RenderSearchResults({
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: Colors[colorScheme].background }}
-      edges={["top", "left", "right"]}
+      edges={["top", "left", "right", "bottom"]}
     >
       <Animated.View
         style={[

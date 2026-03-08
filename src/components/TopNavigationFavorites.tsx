@@ -5,7 +5,7 @@ import FavoriteNewsArticles from "@/app/(tabs)/favorites/favoriteNewsArticles";
 import FavoritePrayers from "@/app/(tabs)/favorites/favoritePrayers";
 import FavoriteQuestions from "@/app/(tabs)/favorites/favoriteQuestions";
 import FavoritePodcasts from "@/app/(tabs)/favorites/favoritePodcasts";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
@@ -26,6 +26,7 @@ export default function TopNavigationFavorites() {
   const [index, setIndex] = React.useState(0);
   const colorScheme = useColorScheme() || "light";
   const { fadeAnim, onLayout } = useScreenFadeIn(800);
+  const insets = useSafeAreaInsets();
 
   const routes = React.useMemo(
     () => [
@@ -79,6 +80,7 @@ export default function TopNavigationFavorites() {
             flex: 1,
             opacity: fadeAnim,
             backgroundColor: Colors[colorScheme].background,
+            paddingBottom: insets.bottom,
           },
         ]}
       >

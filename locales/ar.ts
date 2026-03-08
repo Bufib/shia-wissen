@@ -8,7 +8,7 @@ const ar = {
   errorLoadingArticle: "حدث خطأ أثناء تحميل المقالة",
 
   // News
-  newsTitle: "أخبار",
+  newsTitle: "الأخبار والأحداث",
   newsEmpty: "لا توجد أخبار حتى الآن",
   newNewsAvailable: "أخبار جديدة متاحة",
 
@@ -461,6 +461,7 @@ const ar = {
 
   countdownToday: "اليوم!",
   countdownDaysToGo: "متبقي {{count}} يومًا",
+  homeCalendarSectionTitle: "التقويم الإسلامي",
 
   // Push-notification
   pushNotificationsDisabledTitle: "تم تعطيل إشعارات الدفع",

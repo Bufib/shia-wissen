@@ -11,7 +11,7 @@ export default function About() {
   const { t } = useTranslation();
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+    <SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
       <ScrollView
         style={[
           styles.scrollStyle,

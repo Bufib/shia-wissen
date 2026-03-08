@@ -7,7 +7,7 @@ const de = {
   isExternalLink: "Externer Link",
   errorLoadingArticle: "Es ist ein Fehler beim Laden des Artikels aufgetreten!",
   // News
-  newsTitle: "Neuigkeiten",
+  newsTitle: "Aktuelles",
   newsEmpty: "Es gibt derzeit noch keine Neuigkeiten!",
   newNewsAvailable: "Neue Neuigkeiten verfügbar!",
 
@@ -464,6 +464,7 @@ const de = {
   legendMinorEvent: "Kleines Ereignis",
   countdownToday: "Heute!",
   countdownDaysToGo: "Noch {{count}} Tage",
+  homeCalendarSectionTitle: "Islamischer Kalender",
 
   // Quran
   basmala: "Im Namen Allahs, des Allerbarmers, des Barmherzigen!",
