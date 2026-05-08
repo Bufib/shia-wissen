@@ -222,7 +222,7 @@ export default function QuestionLinks() {
     >
       <View style={{flexDirection: "row", justifyContent: "space-between"}}>
          <ThemedText type="titleBiggerLessBold">{t("categories")} (6)</ThemedText>
-      <Feather name="search" size={30} color={Colors[colorScheme].defaultIcon} style={{marginRight: 10}}/>
+      <Feather name="search" size={30} color={Colors[colorScheme].defaultIcon} style={{marginRight: 10}} onPress={()=> router.push("/home/indexSearch")}/>
       </View>
      
       <ScrollView
