@@ -6,6 +6,7 @@
 // import { useLanguage } from "../../../../contexts/LanguageContext";
 // import { supabase } from "../../../../utils/supabase";
 // import { returnSize } from "../../../../utils/sizes";
+// import { useSearchPdfs } from "../../../../hooks/useSearchPdfs";
 // import { Ionicons } from "@expo/vector-icons";
 // import {
 //   InfiniteData,
@@ -14,12 +15,20 @@
 //   useQuery,
 // } from "@tanstack/react-query";
 // import { router } from "expo-router";
-// import React, { useCallback, useMemo, useState } from "react";
+// import React, {
+//   useCallback,
+//   useEffect,
+//   useMemo,
+//   useRef,
+//   useState,
+// } from "react";
 // import { useTranslation } from "react-i18next";
 // import {
 //   FlatList,
+//   Keyboard,
 //   StyleSheet,
 //   Text,
+//   TextInput,
 //   TouchableOpacity,
 //   useColorScheme,
 //   useWindowDimensions,
@@ -30,15 +39,6 @@
 
 // const PAGE_SIZE = 20;
 
-// /**
-//  * Safely parse a pdf_topic value that can be:
-//  *  - null / undefined
-//  *  - a plain string like "Fiqh"
-//  *  - a JSON-encoded array string like '["Fiqh","Aqida"]'
-//  *  - an actual JS array like ["Fiqh","Aqida"]
-//  *
-//  * Always returns a flat string[] of individual topics.
-//  */
 // function parseTopics(raw: any): string[] {
 //   if (!raw) return [];
 //   if (Array.isArray(raw))
@@ -50,18 +50,13 @@
 //         const parsed = JSON.parse(trimmed);
 //         if (Array.isArray(parsed))
 //           return parsed.map((t) => String(t).trim()).filter(Boolean);
-//       } catch {
-//         // not valid JSON – treat as plain string
-//       }
+//       } catch {}
 //     }
 //     return trimmed ? [trimmed] : [];
 //   }
 //   return [];
 // }
 
-// /**
-//  * Check whether a PDF's raw topic value contains a specific topic string.
-//  */
 // function pdfMatchesTopic(rawTopic: any, topic: string): boolean {
 //   return parseTopics(rawTopic).includes(topic);
 // }
@@ -77,11 +72,40 @@
 //   const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
 //   const [filterVisible, setFilterVisible] = useState(false);
 
-//   // ── Fetch all unique (topic, author) pairs ──────────────────────────
+//   // ── Search state ────────────────────────────────────────────────────
+//   const [searchVisible, setSearchVisible] = useState(false);
+//   const [searchQuery, setSearchQuery] = useState("");
+//   const [debouncedTerm, setDebouncedTerm] = useState("");
+//   const searchInputRef = useRef<TextInput>(null);
+
+//   useEffect(() => {
+//     const h = setTimeout(() => setDebouncedTerm(searchQuery.trim()), 350);
+//     return () => clearTimeout(h);
+//   }, [searchQuery]);
+
+//   const isSearching = debouncedTerm.length > 0;
+
+//   const { data: searchResults = [], isFetching: searchFetching } =
+//     useSearchPdfs(isSearching ? debouncedTerm : "");
+
+//   const openSearch = useCallback(() => {
+//     setSearchVisible(true);
+//     setTimeout(() => searchInputRef.current?.focus(), 100);
+//   }, []);
+
+//   const closeSearch = useCallback(() => {
+//     setSearchQuery("");
+//     setDebouncedTerm("");
+//     setSearchVisible(false);
+//     Keyboard.dismiss();
+//   }, []);
+
+//   // ── Filter pairs ────────────────────────────────────────────────────
 //   const { data: filterPairs = [] } = useQuery<
 //     { topic: string | null; author: string | null }[]
 //   >({
 //     queryKey: ["pdf_filter_pairs", lang],
+
 //     queryFn: async () => {
 //       const { data, error } = await supabase
 //         .from("pdfs")
@@ -89,18 +113,18 @@
 //         .eq("language_code", lang);
 //       if (error) throw error;
 
-//       // Flatten: one row with ["a","b"] becomes two pairs
-//       return (data ?? []).flatMap((r: any): { topic: string | null; author: string | null }[] => {
-//         const topics = parseTopics(r.pdf_topic);
-//         const author = r.pdf_author ?? null;
-//         if (topics.length === 0) return [{ topic: null, author }];
-//         return topics.map((tp) => ({ topic: tp, author }));
-//       });
+//       return (data ?? []).flatMap(
+//         (r: any): { topic: string | null; author: string | null }[] => {
+//           const topics = parseTopics(r.pdf_topic);
+//           const author = r.pdf_author ?? null;
+//           if (topics.length === 0) return [{ topic: null, author }];
+//           return topics.map((tp) => ({ topic: tp, author }));
+//         },
+//       );
 //     },
 //     staleTime: 60 * 60 * 1000,
 //   });
 
-//   // ── Derive deduplicated, sorted topic & author lists ────────────────
 //   const allTopics = useMemo(
 //     () =>
 //       [
@@ -165,20 +189,13 @@
 //           .order("created_at", { ascending: false })
 //           .range(pageParam, pageParam + PAGE_SIZE - 1);
 
-//         // Author is a simple string – use .eq directly
 //         if (selectedAuthor) query = query.eq("pdf_author", selectedAuthor);
-
-//         // Topic lives inside an array (or JSON string), so we fetch all and
-//         // filter client-side. If you migrate pdf_topic to a proper Postgres
-//         // array column you can replace this with:
-//         //   query = query.contains("pdf_topic", [selectedTopic]);
 
 //         const { data: result, error } = await query;
 //         if (error) throw error;
 
 //         let rows = result ?? [];
 
-//         // Client-side topic filter – handles "Fiqh" AND '["Fiqh","Aqida"]'
 //         if (selectedTopic) {
 //           rows = rows.filter((pdf) =>
 //             pdfMatchesTopic((pdf as any).pdf_topic, selectedTopic),
@@ -199,6 +216,10 @@
 //     });
 
 //   const pdfs: PdfType[] = data?.pages.flat() ?? [];
+
+//   // ── Decide which data to show ───────────────────────────────────────
+//   const displayData = isSearching ? searchResults : pdfs;
+//   const showLoading = isSearching ? searchFetching : isLoading;
 
 //   const getPaddedData = (items: PdfType[]) => {
 //     if (items.length % 2 === 1) {
@@ -249,6 +270,11 @@
 //                     color={Colors[colorScheme].tint}
 //                   />
 //                 </View>
+//                 <Text
+//                   style={[styles.metaText, { color: Colors[colorScheme].icon }]}
+//                 >
+//                   {item.pdf_author}
+//                 </Text>
 //               </View>
 
 //               <View style={styles.tileTitleContainer}>
@@ -271,18 +297,8 @@
 //                     color={Colors[colorScheme].icon}
 //                     style={styles.metaIcon}
 //                   />
-//                   <Text
-//                     numberOfLines={1}
-//                     style={[
-//                       styles.metaText,
-//                       { color: Colors[colorScheme].icon },
-//                     ]}
-//                   >
-//                     {item.pdf_author ?? t("tab_pdfs")}
-//                   </Text>
-//                 </View>
-//                 {(item as any).pdf_topic ? (
-//                   <View style={styles.topicBadge}>
+
+//                   {(item as any).pdf_topic ? (
 //                     <Text
 //                       numberOfLines={1}
 //                       style={[
@@ -292,15 +308,15 @@
 //                     >
 //                       {parseTopics((item as any).pdf_topic).join(", ")}
 //                     </Text>
-//                   </View>
-//                 ) : null}
+//                   ) : null}
+//                 </View>
 //               </View>
 //             </View>
 //           </View>
 //         </TouchableOpacity>
 //       );
 //     },
-//     [colorScheme, previewSizes, t],
+//     [colorScheme, previewSizes],
 //   );
 
 //   const activeFilterCount = (selectedTopic ? 1 : 0) + (selectedAuthor ? 1 : 0);
@@ -319,8 +335,19 @@
 //         <ThemedText type="subtitle" style={styles.headerTitle}>
 //           {t("pdfsTitle")}
 //         </ThemedText>
+
+//         <TouchableOpacity style={styles.headerIconBtn} onPress={openSearch}>
+//           <Ionicons
+//             name="search-outline"
+//             size={22}
+//             color={
+//               isSearching ? Colors.universal.primary : Colors[colorScheme].text
+//             }
+//           />
+//         </TouchableOpacity>
+
 //         <TouchableOpacity
-//           style={styles.filterBtn}
+//           style={styles.headerIconBtn}
 //           onPress={() => setFilterVisible(true)}
 //         >
 //           <Ionicons
@@ -340,6 +367,56 @@
 //         </TouchableOpacity>
 //       </View>
 
+//       {/* Search bar */}
+//       {searchVisible && (
+//         <View
+//           style={[
+//             styles.searchBar,
+//             {
+//               backgroundColor: Colors[colorScheme].contrast,
+//               borderColor: Colors[colorScheme].border,
+//             },
+//           ]}
+//         >
+//           <Ionicons
+//             name="search"
+//             size={18}
+//             color={Colors[colorScheme].icon}
+//             style={{ marginRight: 8 }}
+//           />
+//           <TextInput
+//             ref={searchInputRef}
+//             value={searchQuery}
+//             onChangeText={setSearchQuery}
+//             placeholder={t("placeholder_pdfs")}
+//             placeholderTextColor={Colors[colorScheme].icon}
+//             autoCapitalize="none"
+//             autoCorrect={false}
+//             returnKeyType="done"
+//             style={[styles.searchInput, { color: Colors[colorScheme].text }]}
+//           />
+//           {searchQuery.length > 0 && !searchFetching && (
+//             <TouchableOpacity
+//               onPress={() => setSearchQuery("")}
+//               style={styles.clearBtn}
+//             >
+//               <Ionicons
+//                 name="close-circle"
+//                 size={18}
+//                 color={Colors[colorScheme].icon}
+//               />
+//             </TouchableOpacity>
+//           )}
+//           <TouchableOpacity onPress={closeSearch} style={styles.cancelBtn}>
+//             <Text
+//               style={{ color: Colors.universal.primary, fontWeight: "600" }}
+//             >
+//               {t("cancel")}
+//             </Text>
+//           </TouchableOpacity>
+//         </View>
+//       )}
+
 //       <FilterModal
 //         visible={filterVisible}
 //         onClose={() => setFilterVisible(false)}
@@ -352,23 +429,26 @@
 //       />
 
 //       {/* List */}
-//       {isLoading ? (
+//       {showLoading && displayData.length === 0 ? (
 //         <LoadingIndicator size="large" style={{ marginTop: 40 }} />
 //       ) : (
 //         <FlatList
-//           data={getPaddedData(pdfs)}
+//           data={getPaddedData(displayData)}
 //           numColumns={2}
 //           keyExtractor={(item: any) => item.id.toString()}
 //           renderItem={renderItem}
 //           columnWrapperStyle={styles.columnWrapper}
 //           contentContainerStyle={styles.listContent}
 //           showsVerticalScrollIndicator={false}
+//           keyboardDismissMode="on-drag"
+//           keyboardShouldPersistTaps="handled"
 //           onEndReached={() => {
-//             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+//             if (!isSearching && hasNextPage && !isFetchingNextPage)
+//               fetchNextPage();
 //           }}
 //           onEndReachedThreshold={0.5}
 //           ListFooterComponent={() =>
-//             isFetchingNextPage ? (
+//             !isSearching && isFetchingNextPage ? (
 //               <View style={styles.footerLoader}>
 //                 <LoadingIndicator size="small" />
 //               </View>
@@ -397,17 +477,11 @@
 //     paddingHorizontal: 8,
 //     paddingVertical: 10,
 //   },
-//   backBtn: {
-//     padding: 6,
-//   },
 //   headerTitle: {
 //     flex: 1,
 //     textAlign: "center",
 //   },
-//   headerSpacer: {
-//     width: 38,
-//   },
-//   filterBtn: {
+//   headerIconBtn: {
 //     width: 38,
 //     height: 38,
 //     justifyContent: "center",
@@ -429,12 +503,40 @@
 //     fontSize: 10,
 //     fontWeight: "700",
 //   },
+//   // ── Search bar ──────────────────────────────────────────────────────
+//   searchBar: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     marginHorizontal: 16,
+//     marginBottom: 8,
+//     paddingHorizontal: 12,
+//     height: 44,
+//     borderRadius: 12,
+//     borderWidth: 1,
+//   },
+//   searchInput: {
+//     flex: 1,
+//     fontSize: 15,
+//   },
+//   clearBtn: {
+//     padding: 4,
+//   },
+//   cancelBtn: {
+//     marginLeft: 10,
+//     paddingVertical: 4,
+//   },
+//   searchMeta: {
+//     marginHorizontal: 16,
+//     marginBottom: 6,
+//     fontSize: 12,
+//   },
+//   // ── List ────────────────────────────────────────────────────────────
 //   listContent: {
 //     paddingTop: 8,
 //     paddingBottom: 24,
 //   },
 //   columnWrapper: {
-//     marginBottom: 25,
+//     marginBottom: 15,
 //     justifyContent: "space-between",
 //     paddingHorizontal: 16,
 //   },
@@ -442,20 +544,21 @@
 //   modernTile: {
 //     borderRadius: 16,
 //     borderWidth: 1,
-//     overflow: "hidden",
 //     shadowColor: "#000",
 //     shadowOffset: { width: 0, height: 2 },
 //     shadowOpacity: 0.08,
 //     shadowRadius: 8,
 //     elevation: 3,
+//     padding: 10,
 //   },
 //   tileContent: {
 //     flex: 1,
-//     padding: 10,
 //     justifyContent: "space-between",
 //   },
 //   tileIconContainer: {
-//     marginBottom: 8,
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "space-between",
 //   },
 //   iconCircle: {
 //     width: 44,
@@ -475,10 +578,7 @@
 //     lineHeight: 20,
 //     letterSpacing: 0.2,
 //   },
-//   tileFooter: {
-//     marginTop: 8,
-//     gap: 4,
-//   },
+//   tileFooter: {},
 //   metaRow: {
 //     flexDirection: "row",
 //     alignItems: "center",
@@ -488,7 +588,7 @@
 //   },
 //   metaText: {
 //     fontSize: 11,
-//     flex: 1,
+//     flexShrink: 1,
 //   },
 //   topicBadge: {
 //     marginTop: 2,
@@ -554,24 +654,28 @@ const PAGE_SIZE = 20;
 
 function parseTopics(raw: any): string[] {
   if (!raw) return [];
-  if (Array.isArray(raw))
+
+  if (Array.isArray(raw)) {
     return raw.map((t) => String(t).trim()).filter(Boolean);
+  }
+
   if (typeof raw === "string") {
     const trimmed = raw.trim();
+
     if (trimmed.startsWith("[")) {
       try {
         const parsed = JSON.parse(trimmed);
-        if (Array.isArray(parsed))
+
+        if (Array.isArray(parsed)) {
           return parsed.map((t) => String(t).trim()).filter(Boolean);
+        }
       } catch {}
     }
+
     return trimmed ? [trimmed] : [];
   }
-  return [];
-}
 
-function pdfMatchesTopic(rawTopic: any, topic: string): boolean {
-  return parseTopics(rawTopic).includes(topic);
+  return [];
 }
 
 export default function AllPdfsScreen() {
@@ -623,17 +727,23 @@ export default function AllPdfsScreen() {
         .from("pdfs")
         .select("pdf_topic, pdf_author")
         .eq("language_code", lang);
+
       if (error) throw error;
 
       return (data ?? []).flatMap(
         (r: any): { topic: string | null; author: string | null }[] => {
           const topics = parseTopics(r.pdf_topic);
           const author = r.pdf_author ?? null;
-          if (topics.length === 0) return [{ topic: null, author }];
-          return topics.map((tp) => ({ topic: tp, author }));
+
+          if (topics.length === 0) {
+            return [{ topic: null, author }];
+          }
+
+          return topics.map((topic) => ({ topic, author }));
         },
       );
     },
+    enabled: Boolean(lang),
     staleTime: 60 * 60 * 1000,
   });
 
@@ -698,30 +808,31 @@ export default function AllPdfsScreen() {
           .from("pdfs")
           .select("*")
           .eq("language_code", lang)
-          .order("created_at", { ascending: false })
-          .range(pageParam, pageParam + PAGE_SIZE - 1);
+          .order("created_at", { ascending: false });
 
-        if (selectedAuthor) query = query.eq("pdf_author", selectedAuthor);
-
-        const { data: result, error } = await query;
-        if (error) throw error;
-
-        let rows = result ?? [];
-
-        if (selectedTopic) {
-          rows = rows.filter((pdf) =>
-            pdfMatchesTopic((pdf as any).pdf_topic, selectedTopic),
-          );
+        if (selectedAuthor) {
+          query = query.eq("pdf_author", selectedAuthor);
         }
 
-        return rows;
+        if (selectedTopic) {
+          query = query.contains("pdf_topic", [selectedTopic]);
+        }
+
+        const { data: result, error } = await query.range(
+          pageParam,
+          pageParam + PAGE_SIZE - 1,
+        );
+
+        if (error) throw error;
+
+        return result ?? [];
       },
       getNextPageParam: (lastPage, allPages) => {
-        const fetchedSoFar = allPages.reduce(
-          (acc, page) => acc + page.length,
-          0,
-        );
-        return lastPage.length === PAGE_SIZE ? fetchedSoFar : undefined;
+        if (lastPage.length < PAGE_SIZE) {
+          return undefined;
+        }
+
+        return allPages.length * PAGE_SIZE;
       },
       initialPageParam: 0,
       enabled: Boolean(lang),
@@ -737,6 +848,7 @@ export default function AllPdfsScreen() {
     if (items.length % 2 === 1) {
       return [...items, { id: -1, isPlaceholder: true } as any];
     }
+
     return items;
   };
 
@@ -746,6 +858,7 @@ export default function AllPdfsScreen() {
       if ((item as any).isPlaceholder) {
         return <View style={{ width: previewSizes }} />;
       }
+
       return (
         <TouchableOpacity
           style={styles.tileWrapper}
@@ -782,8 +895,10 @@ export default function AllPdfsScreen() {
                     color={Colors[colorScheme].tint}
                   />
                 </View>
+
                 <Text
                   style={[styles.metaText, { color: Colors[colorScheme].icon }]}
+                  numberOfLines={1}
                 >
                   {item.pdf_author}
                 </Text>
@@ -871,6 +986,7 @@ export default function AllPdfsScreen() {
                 : Colors[colorScheme].text
             }
           />
+
           {activeFilterCount > 0 && (
             <View style={styles.filterBadge}>
               <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
@@ -896,6 +1012,7 @@ export default function AllPdfsScreen() {
             color={Colors[colorScheme].icon}
             style={{ marginRight: 8 }}
           />
+
           <TextInput
             ref={searchInputRef}
             value={searchQuery}
@@ -907,6 +1024,7 @@ export default function AllPdfsScreen() {
             returnKeyType="done"
             style={[styles.searchInput, { color: Colors[colorScheme].text }]}
           />
+
           {searchQuery.length > 0 && !searchFetching && (
             <TouchableOpacity
               onPress={() => setSearchQuery("")}
@@ -919,6 +1037,7 @@ export default function AllPdfsScreen() {
               />
             </TouchableOpacity>
           )}
+
           <TouchableOpacity onPress={closeSearch} style={styles.cancelBtn}>
             <Text
               style={{ color: Colors.universal.primary, fontWeight: "600" }}
@@ -955,8 +1074,9 @@ export default function AllPdfsScreen() {
           keyboardDismissMode="on-drag"
           keyboardShouldPersistTaps="handled"
           onEndReached={() => {
-            if (!isSearching && hasNextPage && !isFetchingNextPage)
+            if (!isSearching && hasNextPage && !isFetchingNextPage) {
               fetchNextPage();
+            }
           }}
           onEndReachedThreshold={0.5}
           ListFooterComponent={() =>
@@ -1015,6 +1135,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
   },
+
   // ── Search bar ──────────────────────────────────────────────────────
   searchBar: {
     flexDirection: "row",
@@ -1042,6 +1163,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     fontSize: 12,
   },
+
   // ── List ────────────────────────────────────────────────────────────
   listContent: {
     paddingTop: 8,
@@ -1090,8 +1212,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     letterSpacing: 0.2,
   },
-  tileFooter: {
-  },
+  tileFooter: {},
   metaRow: {
     flexDirection: "row",
     alignItems: "center",

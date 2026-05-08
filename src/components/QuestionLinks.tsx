@@ -92,43 +92,7 @@ export default function QuestionLinks() {
               </View>
             </TouchableOpacity>
           ))}
-          {/* <TouchableOpacity
-            onPress={() => {
-              router.push({
-                pathname:
-                  "/(tabs)/knowledge/questions/questionVideosCategories",
-                params: { category: "Videos", categoryName: t("videos") },
-              });
-            }}
-            style={[
-              styles.element,
-              {
-                backgroundColor: Colors[colorScheme].contrast,
-                width: "96%",
-                height: elementSize / 2,
-              },
-            ]}
-          >
-            <View
-              style={[
-                styles.categoryButtonContainer,
-                { gap: iconSize / 10 - 1 },
-              ]}
-            >
-              <View style={styles.videoTextContainer}>
-                <Entypo
-                  name="folder-video"
-                  size={28}
-                  color={Colors.universal.questionLinks}
-                />
-                <ThemedText
-                  style={[styles.elementText, { fontSize: fontSize * 1.7 }]}
-                >
-                  {t("videos")}
-                </ThemedText>
-              </View>
-            </View>
-          </TouchableOpacity> */}
+          
         </View>
       </View>
 
@@ -143,8 +107,7 @@ export default function QuestionLinks() {
         </View>
         <LatestQuestions />
       </View>
-      {/* Login */}
-      {/* {lang === "de" && (
+      {lang === "de" && (
         <TouchableOpacity
           style={styles.askQuestionButton}
           onPress={() => router.push("/(askQuestion)")}
@@ -155,7 +118,7 @@ export default function QuestionLinks() {
             color="#fff"
           />
         </TouchableOpacity>
-      )} */}
+      )}
     </Animated.View>
   );
 }

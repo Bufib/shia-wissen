@@ -71,7 +71,12 @@ export default function Index() {
   const renderQuestion = useCallback(
     ({ item }: { item: QuestionsFromUserType }) => (
       <Pressable
-        style={[styles.questionCard, Colors[colorScheme].contrast]}
+        style={[
+          styles.questionCard,
+          {
+            backgroundColor: Colors[colorScheme].contrast,
+          },
+        ]}
         onPress={() =>
           router.push({
             pathname: "/(askQuestion)/questionDetailScreen",
@@ -135,9 +140,7 @@ export default function Index() {
 
   // 9. Main UI
   return (
-    <ThemedView
-      style={[styles.container, Colors[colorScheme].backgroundColor]}
-    >
+    <ThemedView style={[styles.container, Colors[colorScheme].backgroundColor]}>
       {/* If offline, show your "No Internet" banner at top */}
       {!hasInternet && <NoInternet showUI={true} showToast={false} />}
 
@@ -162,6 +165,7 @@ export default function Index() {
         extraData={userQuestionVersion}
         contentContainerStyle={[
           styles.listContainer,
+
           questions?.length === 0 && !isLoading && styles.emptyListContainer,
         ]}
         refreshControl={

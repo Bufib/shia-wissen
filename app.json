@@ -2,7 +2,7 @@
   "expo": {
     "name": "Shia-Wissen",
     "slug": "Shia-Wissen",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -67,8 +67,7 @@
       ],
       "@react-native-community/datetimepicker",
       "expo-image",
-      "expo-asset",
-      "react-native-enriched-markdown"
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,

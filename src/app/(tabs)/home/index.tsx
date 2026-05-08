@@ -1139,7 +1139,7 @@ export default function HomeScreen() {
                     styles.addButton,
                     {
                       backgroundColor:
-                        Colors[colorScheme].homeAdminButtonBackground,
+                        Colors[colorScheme].defaultIcon,
                     },
                   ]}
                   activeOpacity={0.7}
@@ -1490,10 +1490,12 @@ const styles = StyleSheet.create({
   lastSection: {},
 
   newsHeaderRow: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems:"flex-end",
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     paddingRight: 15,
+    paddingTop:5
   },
   sectionHeaderRow: {
     flexDirection: "row",
