@@ -1,179 +1,171 @@
-// src/components/PdfPreviewCard.tsx
-import type { PdfType } from "@/constants/Types";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useGradient } from "../../hooks/useGradient";
-import { formatDate } from "../../utils/formatDate";
-import { Entypo } from "@expo/vector-icons";
-import Feather from "@expo/vector-icons/Feather";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { FC } from "react";
-import { StyleSheet, Text, View } from "react-native";
+// import PdfPreviewCard from "@/components/PdfPreviewCard";
+// import RetryButton from "@/components/RetryButton";
+// import { ThemedText } from "@/components/ThemedText";
+// import { Colors } from "@/constants/Colors";
+// import { PdfType } from "@/constants/Types";
+// import { LoadingIndicator } from "@/components/LoadingIndicator";
+// import { router } from "expo-router";
+// import React from "react";
+// import { useTranslation } from "react-i18next";
+// import {
+//   FlatList,
+//   Pressable,
+//   StyleSheet,
+//   Text,
+//   TouchableOpacity,
+//   useColorScheme,
+//   View,
+// } from "react-native";
 
-export type PdfProps = {
-  pdf: PdfType;
-};
+// type PdfSectionProps = {
+//   pdfs: PdfType[];
+//   isLoading: boolean;
+//   isError: boolean;
+//   errorMessage?: string;
+//   fetchNextPage: () => void;
+//   hasNextPage?: boolean;
+//   isFetchingNextPage: boolean;
+// };
 
-const PdfPreviewCard: FC<PdfProps> = ({ pdf }) => {
-  const { gradientColors } = useGradient();
-  const { rtl, lang } = useLanguage();
-  const formattedDate = formatDate(pdf.created_at);
+// export default function PdfSection({
+//   pdfs,
+//   isLoading,
+//   isError,
+//   errorMessage,
+//   fetchNextPage,
+//   hasNextPage,
+//   isFetchingNextPage,
+// }: PdfSectionProps) {
+//   const colorScheme = useColorScheme() ?? "light";
+//   const { t } = useTranslation();
 
-  return (
-    <View style={styles.container}>
-      <LinearGradient
-        style={styles.cardWrapper}
-        colors={gradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        {/* Document icon / badge */}
+//   if (pdfs.length === 0 && !isLoading && !isError) {
+//     return null;
+//   }
 
-        <View style={styles.vinylRecord}>
-            {pdf.isBook ? (
-              <Entypo
-                name="open-book"
-                size={20}
-                color="rgba(255, 255, 255, 0.8)"
-              />
-            ) : (
-              <Feather
-                name="file-text"
-                size={20}
-                color="rgba(255, 255, 255, 0.8)"
-              />
-            )}
-        </View>
+//   return (
+//     <View style={styles.section}>
+//       <View style={styles.sectionHeaderRow}>
+//         <ThemedText style={styles.sectionLabel}>
+//           {t("pdfsTitle").toUpperCase()}
+//         </ThemedText>
 
-        {/* Overlay */}
-        <View style={styles.overlay} />
+//         <Pressable
+//           onPressIn={() => router.push("/(tabs)/home/allPdfs")}
+//           hitSlop={styles.showAllHitSlop}
+//           style={({ pressed }) => pressed && { opacity: 0.6 }}
+//         >
+//           <Text style={[styles.showAllText, { color: Colors.universal.link }]}>
+//             {t("showAll")}
+//           </Text>
+//         </Pressable>
+//       </View>
 
-        {/* Content */}
-        <View style={styles.content}>
-          <View style={styles.titleContainer}>
-            <Text
-              style={[
-                styles.title,
-                { textAlign: lang === "ar" ? "right" : "left" },
-              ]}
-              numberOfLines={3}
-              ellipsizeMode="tail"
-            >
-              {pdf.pdf_title.trim()}
-            </Text>
-          </View>
+//       {isLoading && (
+//         <LoadingIndicator style={styles.sectionLoader} size="large" />
+//       )}
 
-          <View style={styles.footer}>
-            <Text
-              style={[styles.createdAt, { textAlign: rtl ? "left" : "right" }]}
-            >
-              {formattedDate}
-            </Text>
-          </View>
-        </View>
-      </LinearGradient>
-    </View>
-  );
-};
+//       {isError && (
+//         <View style={styles.errorContainer}>
+//           <Text
+//             style={[styles.errorText, { color: Colors[colorScheme].error }]}
+//           >
+//             {errorMessage ?? t("errorLoadingData")}
+//           </Text>
 
-export default PdfPreviewCard;
+//           <RetryButton onPress={fetchNextPage} />
+//         </View>
+//       )}
 
-const styles = StyleSheet.create({
-  container: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
-    overflow: "visible",
-  },
-  cardWrapper: {
-    height: 280,
-    width: 220,
-    borderRadius: 32,
-    position: "relative",
-    overflow: "hidden",
-  },
+//       {!isLoading && !isError && (
+//         <FlatList
+//           data={pdfs}
+//           numColumns={2}
+//           keyExtractor={(item) => item.id.toString()}
+//           showsHorizontalScrollIndicator={false}
+//           showsVerticalScrollIndicator={false}
+//           contentContainerStyle={styles.pdfListContent}
+//           columnWrapperStyle={styles.pdfRow}
+//           renderItem={({ item }) => (
+//             <TouchableOpacity
+//               style={styles.pdfItem}
+//               activeOpacity={0.8}
+//               onPress={() =>
+//                 router.push({
+//                   pathname: "/(pdfs)",
+//                   params: { filename: item.pdf_filename },
+//                 })
+//               }
+//             >
+//               <PdfPreviewCard pdf={item} />
+//             </TouchableOpacity>
+//           )}
+//           onEndReached={() => {
+//             if (hasNextPage && !isFetchingNextPage) {
+//               fetchNextPage();
+//             }
+//           }}
+//           onEndReachedThreshold={0.5}
+//           ListFooterComponent={() =>
+//             isFetchingNextPage ? (
+//               <LoadingIndicator style={styles.footerLoader} size="small" />
+//             ) : null
+//           }
+//         />
+//       )}
+//     </View>
+//   );
+// }
 
-  // reuse "vinyl" styles as a generic badge
-  vinylRecord: {
-    top: 10,
-    right: 10,
-    width: 60,
-    height: 60,
-    borderRadius: 40,
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "flex-end",
-    zIndex: 1,
-  },
-  vinylCenter: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
-    zIndex: 2,
-  },
-  content: {
-    flex: 1,
-    padding: 24,
-    justifyContent: "space-between",
-    zIndex: 3,
-  },
-  titleContainer: {
-    flex: 1,
-    justifyContent: "center",
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "900",
-    color: "#FFFFFF",
-    lineHeight: 28,
-    letterSpacing: -0.5,
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 4,
-  },
-  footer: {
-    flexDirection: "column",
-    gap: 5,
-  },
-  openSection: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  openButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 20,
-    padding: 12,
-  },
-  openText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "rgba(255, 255, 255, 0.9)",
-    letterSpacing: 1.2,
-    marginLeft: 12,
-  },
-  createdAt: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "rgba(255, 255, 255, 0.8)",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-  },
-});
+// const styles = StyleSheet.create({
+//   section: {
+//     gap: 10,
+//   },
+//   sectionHeaderRow: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     paddingRight: 12,
+//   },
+//   sectionLabel: {
+//     fontSize: 16,
+//     fontWeight: "700",
+//     letterSpacing: 1.2,
+//     paddingHorizontal: 20,
+//   },
+//   showAllText: {
+//     fontSize: 14,
+//     fontWeight: "600",
+//   },
+//   showAllHitSlop: {
+//     top: 8,
+//     bottom: 8,
+//     left: 8,
+//     right: 8,
+//   },
+//   sectionLoader: {
+//     marginVertical: 24,
+//   },
+//   pdfListContent: {
+//     paddingHorizontal: 16,
+//     paddingBottom: 20,
+//     gap: 12,
+//   },
+//   pdfRow: {
+//     gap: 12,
+//   },
+//   pdfItem: {
+//     flex: 1,
+//   },
+//   footerLoader: {
+//     marginTop: 16,
+//   },
+//   errorContainer: {
+//     alignItems: "center",
+//     gap: 10,
+//     paddingVertical: 16,
+//   },
+//   errorText: {
+//     fontSize: 16,
+//   },
+// });

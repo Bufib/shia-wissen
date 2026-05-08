@@ -5,6 +5,7 @@ import {
   Pressable,
   FlatList,
   useColorScheme,
+  TouchableOpacity,
 } from "react-native";
 import { router } from "expo-router";
 import { getLatestQuestions } from "../../db/queries/questions";
@@ -15,6 +16,8 @@ import { LoadingIndicator } from "./LoadingIndicator";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useDataVersionStore } from "../../stores/dataVersionStore";
 import { Colors } from "@/constants/Colors";
+import { useTranslation } from "react-i18next";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const LatestQuestions: React.FC = () => {
   //State & Hooks
@@ -23,7 +26,7 @@ const LatestQuestions: React.FC = () => {
   const { lang } = useLanguage();
   const colorScheme = useColorScheme();
   const questionsVersion = useDataVersionStore((s) => s.questionsVersion);
-
+  const { t } = useTranslation();
   // useEffect(() => {
   //   const loadLatestQuestions = async () => {
   //     setIsLoading(true);
@@ -131,14 +134,34 @@ const LatestQuestions: React.FC = () => {
 
   //Main Render: FlatList of Latest Questions
   return (
-    <FlatList
-      data={latestQuestions}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={renderItem}
-      style={styles.list}
-      contentContainerStyle={styles.listContent}
-      showsVerticalScrollIndicator
-    />
+    <>
+      <ThemedText
+        type="titleBiggerLessBold"
+        style={styles.footerHeaderContainerText}
+      >
+        {t("latestQuestions")}
+      </ThemedText>
+      <FlatList
+        data={latestQuestions}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        style={styles.list}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator
+      />
+       {lang === "de" && (
+        <TouchableOpacity
+          style={styles.askQuestionButton}
+          onPress={() => router.push("/(askQuestion)")}
+        >
+          <MaterialCommunityIcons
+            name="chat-question-outline"
+            size={50}
+            color="#fff"
+          />
+        </TouchableOpacity>
+      )}
+    </>
   );
 };
 
@@ -190,6 +213,18 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 12,
     color: "#888",
+  },
+  footerHeaderContainerText: {
+    paddingHorizontal: 5,
+    paddingBottom: 3,
+  },
+   askQuestionButton: {
+    position: "absolute",
+    bottom: 50,
+    right: 10,
+    padding: 15,
+    backgroundColor: "#057958",
+    borderRadius: 99,
   },
 });
 

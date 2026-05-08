@@ -174,11 +174,11 @@ import { useFetchVideoCategories } from "../../hooks/useFetchVideoCategories";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
-import { LoadingIndicator } from "@/components/LoadingIndicator";
 import { useLanguage } from "../../contexts/LanguageContext";
 import HeaderLeftBackButton from "@/components/HeaderLeftBackButton";
 import { useTranslation } from "react-i18next";
 import { VideosSkeleton } from "./VideosSkeleton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // const VideosSkeleton: React.FC<{ colorScheme: "light" | "dark" }> = ({ colorScheme }) => {
 //   const anim = useRef(new Animated.Value(0)).current;
@@ -223,7 +223,13 @@ export default function RenderQuestionVideosCategories() {
   const headerLeft = React.useCallback(() => <HeaderLeftBackButton />, []);
 
   return (
-    <ThemedView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
+      edges={["top"]}
+    >
       {/* Render this ONCE */}
       <Stack.Screen
         options={{
@@ -255,7 +261,7 @@ export default function RenderQuestionVideosCategories() {
             <TouchableOpacity
               onPress={() =>
                 router.push({
-                  pathname: "/(tabs)/knowledge/questions/questionVideos",
+                  pathname: "/questionVideos",
                   params: { categoryName: item.video_category },
                 })
               }
@@ -281,7 +287,7 @@ export default function RenderQuestionVideosCategories() {
           )}
         />
       )}
-    </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -293,8 +299,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    textAlign: "center"
-
+    textAlign: "center",
   },
   flatListStyle: {
     paddingTop: 10,

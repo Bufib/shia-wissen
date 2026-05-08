@@ -5,7 +5,10 @@ import FavoriteNewsArticles from "@/app/(tabs)/favorites/favoriteNewsArticles";
 import FavoritePrayers from "@/app/(tabs)/favorites/favoritePrayers";
 import FavoriteQuestions from "@/app/(tabs)/favorites/favoriteQuestions";
 import FavoritePodcasts from "@/app/(tabs)/favorites/favoritePodcasts";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
@@ -18,7 +21,7 @@ const renderScene = SceneMap({
   favoriteQuestions: FavoriteQuestions,
   favoritePodcasts: FavoritePodcasts,
   favoriteQuran: FavoriteQuran,
-  favoritePdfs: FavoritePdfs
+  favoritePdfs: FavoritePdfs,
 });
 
 export default function TopNavigationFavorites() {
@@ -36,12 +39,6 @@ export default function TopNavigationFavorites() {
       //   title: "",
       //   icon: require("@/assets/images/newsArticleHeaderLogo.png"),
       // },
-      {
-        key: "favoritePodcasts",
-        // title: t("podcastScreenTitle"),
-        title: "",
-        icon: require("@/assets/images/podcastHeaderLogo2.png"),
-      },
 
       {
         key: "favoriteQuestions",
@@ -68,7 +65,7 @@ export default function TopNavigationFavorites() {
         icon: require("@/assets/images/pdfs.png"),
       },
     ],
-    []
+    [],
   );
 
   return (
@@ -95,19 +92,6 @@ export default function TopNavigationFavorites() {
           initialLayout={{ width: layout.width }}
           options={{
             favoriteNewsArticles: {
-              icon: ({ route, focused, color }) => (
-                <Image
-                  source={route.icon}
-                  contentFit="contain"
-                  style={{
-                    width: 35,
-                    height: 35,
-                    opacity: focused ? 1 : 0.6,
-                  }}
-                />
-              ),
-            },
-            favoritePodcasts: {
               icon: ({ route, focused, color }) => (
                 <Image
                   source={route.icon}

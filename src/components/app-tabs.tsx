@@ -29,20 +29,20 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="knowledge" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t("knowledge")}</NativeTabs.Trigger.Label>
+      <NativeTabs.Trigger name="videos" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>{t("videos")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          sf="book"
-          md="menu_book"
+          sf="video"
+          md="video_file"
           renderingMode="template"
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="search" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t("search")}</NativeTabs.Trigger.Label>
+      <NativeTabs.Trigger name="pdfs" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>{t("pdfsTitle")}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          sf="magnifyingglass"
-          md="search"
+          sf="book"
+          md="book"
           renderingMode="template"
         />
       </NativeTabs.Trigger>

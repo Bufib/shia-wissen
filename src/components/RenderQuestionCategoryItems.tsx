@@ -97,7 +97,7 @@ function RenderQuestionCategoryItems({ category }: { category: string }) {
           <TouchableOpacity
             onPress={() =>
               router.push({
-                pathname: "/knowledge/questions/questionSubcategories",
+                pathname: "/(questions)/questionSubcategories",
                 params: { category, subcategory: item },
               })
             }
