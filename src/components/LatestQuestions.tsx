@@ -134,7 +134,7 @@ const LatestQuestions: React.FC = () => {
 
   //Main Render: FlatList of Latest Questions
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <ThemedText
         type="titleBiggerLessBold"
         style={styles.footerHeaderContainerText}
@@ -149,7 +149,7 @@ const LatestQuestions: React.FC = () => {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator
       />
-       {lang === "de" && (
+      {lang === "de" && (
         <TouchableOpacity
           style={styles.askQuestionButton}
           onPress={() => router.push("/(askQuestion)")}
@@ -161,7 +161,7 @@ const LatestQuestions: React.FC = () => {
           />
         </TouchableOpacity>
       )}
-    </>
+    </View>
   );
 };
 
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingBottom: 3,
   },
-   askQuestionButton: {
+  askQuestionButton: {
     position: "absolute",
     bottom: 50,
     right: 10,

@@ -1,10 +1,7 @@
 import * as React from "react";
 import { useWindowDimensions, useColorScheme, Animated } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import FavoriteNewsArticles from "@/app/(tabs)/favorites/favoriteNewsArticles";
-import FavoritePrayers from "@/app/(tabs)/favorites/favoritePrayers";
 import FavoriteQuestions from "@/app/(tabs)/favorites/favoriteQuestions";
-import FavoritePodcasts from "@/app/(tabs)/favorites/favoritePodcasts";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -12,15 +9,10 @@ import {
 import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
-import FavoriteQuran from "@/app/(tabs)/favorites/favoriteQuran";
 import FavoritePdfs from "@/app/(tabs)/favorites/favoritePdfs";
 
 const renderScene = SceneMap({
-  favoriteNewsArticles: FavoriteNewsArticles,
-  favoritePrayers: FavoritePrayers,
   favoriteQuestions: FavoriteQuestions,
-  favoritePodcasts: FavoritePodcasts,
-  favoriteQuran: FavoriteQuran,
   favoritePdfs: FavoritePdfs,
 });
 

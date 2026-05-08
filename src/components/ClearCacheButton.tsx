@@ -111,8 +111,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LoadingIndicator } from "./LoadingIndicator";
 import Toast from "react-native-toast-message";
-import { useGlobalPlayer } from "../../player/useGlobalPlayer";
-import { usePodcastDownloadStore } from "../../stores/usePodcastDownloadStore";
 
 async function clearAppCache(): Promise<void> {
   const cacheDir = FileSystem.cacheDirectory;
@@ -120,8 +118,8 @@ async function clearAppCache(): Promise<void> {
   const items = await FileSystem.readDirectoryAsync(cacheDir);
   await Promise.all(
     items.map((name) =>
-      FileSystem.deleteAsync(cacheDir + name, { idempotent: true })
-    )
+      FileSystem.deleteAsync(cacheDir + name, { idempotent: true }),
+    ),
   );
 }
 
@@ -138,8 +136,6 @@ const ClearAppCacheButton: React.FC = () => {
   const [isClearing, setIsClearing] = useState(false);
   const isMountedRef = useRef(false);
   const queryClient = useQueryClient();
-  const { stopAndUnload } = useGlobalPlayer();
-  const resetAllDownloads = usePodcastDownloadStore((s) => s.resetAll);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -161,20 +157,10 @@ const ClearAppCacheButton: React.FC = () => {
             try {
               setIsClearing(true);
 
-              // 1. Stop and unload the global player
-              await stopAndUnload();
-
               // 2. Clear file system cache
               await clearAppCache();
 
-              // 3. Clear AsyncStorage podcast data
-              await clearPodcastAsyncStorage();
-
-              // 4. Reset Zustand download store
-              resetAllDownloads?.();
-
               // 5. Clear React Query cache
-              queryClient.removeQueries({ queryKey: ["podcasts"] });
               queryClient.removeQueries({ queryKey: ["download"] });
 
               if (isMountedRef.current) {
@@ -194,9 +180,9 @@ const ClearAppCacheButton: React.FC = () => {
             }
           },
         },
-      ]
+      ],
     );
-  }, [t, queryClient, stopAndUnload, resetAllDownloads]);
+  }, [t, queryClient]);
 
   return (
     <TouchableOpacity

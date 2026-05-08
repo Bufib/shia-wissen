@@ -126,7 +126,7 @@ export const getLatestQuestions = async (
     SELECT * FROM questions
     WHERE language_code = ?
     ORDER BY created_at DESC
-    LIMIT 5;
+    LIMIT 7;
   `,
     [language]
   );

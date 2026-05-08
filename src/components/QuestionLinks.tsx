@@ -196,7 +196,7 @@ import { Colors } from "@/constants/Colors";
 import { returnSize } from "../../utils/sizes";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Entypo, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
 
 export default function QuestionLinks() {
@@ -217,14 +217,31 @@ export default function QuestionLinks() {
         {
           opacity: fadeAnim,
           backgroundColor: Colors[colorScheme].background,
+          gap: 7,
         },
       ]}
     >
-      <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-         <ThemedText type="titleBiggerLessBold">{t("categories")} (6)</ThemedText>
-      <Feather name="search" size={30} color={Colors[colorScheme].defaultIcon} style={{marginRight: 10}} onPress={()=> router.push("/home/indexSearch")}/>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingLeft: 10,
+        }}
+      >
+        <ThemedText type="titleBiggerLessBold">
+          {t("categories")} (6)
+        </ThemedText>
+
+        <Feather
+          name="search"
+          size={30}
+          color={Colors[colorScheme].defaultIcon}
+          style={{ marginRight: 10 }}
+          onPress={() => router.push("/home/indexSearch")}
+        />
       </View>
-     
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

@@ -486,8 +486,6 @@ import {
 } from "react-native";
 import { MenuProvider } from "react-native-popup-menu";
 import Toast from "react-native-toast-message";
-import MiniPlayerBar from "@/components/MiniPlayerBar";
-import GlobalVideoHost from "../../player/GlobalVideoHost";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDatabase } from "../../db";
 import { migrateDbIfNeeded, DB_NAME } from "../../db/migrates";
@@ -803,7 +801,6 @@ function AppContent() {
                       />
                     </Stack>
 
-                    <MiniPlayerBar />
                     <AppReviewPrompt />
                   </BottomSheetModalProvider>
                 </SupabaseRealtimeProvider>
@@ -927,10 +924,8 @@ export default function RootLayout() {
   if (!dbReady) return null;
 
   return (
-    <GlobalVideoHost>
-      <LanguageProvider>
-        <AppContent />
-      </LanguageProvider>
-    </GlobalVideoHost>
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }

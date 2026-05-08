@@ -3,8 +3,7 @@ import { Stack } from "expo-router";
 import React from "react";
 const _layout = () => {
   return (
-          <Stack screenOptions={{headerBackButtonMenuEnabled: false,}}>
-
+    <Stack screenOptions={{ headerBackButtonMenuEnabled: false }}>
       <Stack.Screen
         name="index"
         options={{
@@ -12,9 +11,9 @@ const _layout = () => {
           headerLeft: () => <HeaderLeftBackButton />,
         }}
       />
+      <Stack.Screen name="allPdfs" options={{ headerShown: false }} />
     </Stack>
   );
 };
 
 export default _layout;
-

@@ -12,47 +12,31 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <View
+    <Animated.View
+      onLayout={onLayout}
       style={[
         styles.container,
         {
+          opacity: fadeAnim,
           backgroundColor: Colors[colorScheme].background,
-          paddingTop: insets.top,
+        },
+        {
+          backgroundColor: Colors[colorScheme].background,
+          paddingTop: insets.top + 5,
           paddingBottom: insets.bottom,
+          paddingHorizontal: 10
         },
       ]}
     >
-      <Animated.View
-        onLayout={onLayout}
-        style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            backgroundColor: Colors[colorScheme].background,
-          },
-        ]}
-      >
-        <QuestionLinks />
-
-        <View style={styles.latestQuestionsContainer}>
-          <LatestQuestions />
-        </View>
-      </Animated.View>
-    </View>
+      <QuestionLinks />
+      <LatestQuestions />
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
-  },
-
-  content: {
-    flex: 1,
-  },
-
-  latestQuestionsContainer: {
-    flex: 1,
+    gap: 5,
   },
 });

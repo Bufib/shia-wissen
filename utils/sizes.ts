@@ -8,10 +8,10 @@ export const returnSize = (width: number, height: number): SizesType => {
   const isSmall = !isTablet && !isLarge && !isMedium;
 
   return {
-    elementSize: isTablet ? 150 : isLarge ? 125 : isMedium ? 105 : 100,
-    fontSize: isTablet ? 15 : isLarge ? 13 : isMedium ? 12 : 11,
+    elementSize: isTablet ? 150 : isLarge ? 125 : isMedium ? 110 : 100,
+    fontSize: isTablet ? 15 : isLarge ? 14 : isMedium ? 13 : 12,
     badgeSize: isTablet ? 14 : isLarge ? 12 : isMedium ? 10 : 9,
-    iconSize: isTablet ? 75 : isLarge ? 65 : isMedium ? 55 : 50,
+    iconSize: isTablet ? 75 : isLarge ? 65 : isMedium ? 60 : 50,
     imageSize: isTablet ? 350 : isLarge ? 300 : isMedium ? 260 : 240,
     gap: isTablet ? 40 : isLarge ? 30 : isMedium ? 22 : 15,
     emptyIconSize: isTablet ? 80 : isLarge ? 60 : isMedium ? 40 : 30,
