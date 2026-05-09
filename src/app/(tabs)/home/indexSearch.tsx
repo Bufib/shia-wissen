@@ -1,8 +1,8 @@
 import React from "react";
-import RenderSearchResults from "@/components/RenderSearchResults";
+import RenderSearch from "@/components/RenderSearch";
 
 const index = () => {
-  return <RenderSearchResults />;
+  return <RenderSearch />;
 };
 
 export default index;

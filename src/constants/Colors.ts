@@ -254,7 +254,8 @@ export const Colors: any = {
     third: "#08832d",
     grayedOut: "#888",
     link: "#0a84ff",
-    questionLinks: "#2ea853",
+    questionLinks: "#007A55",
+
     prayerLinks: "#84CEEB",
     externalLinkIcon: "#057958",
     favorite: "#F59E0B",

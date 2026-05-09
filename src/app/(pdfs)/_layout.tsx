@@ -11,7 +11,6 @@ const _layout = () => {
           headerLeft: () => <HeaderLeftBackButton />,
         }}
       />
-      <Stack.Screen name="allPdfs" options={{ headerShown: false }} />
     </Stack>
   );
 };

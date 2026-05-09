@@ -344,10 +344,19 @@ export default function AllPdfsScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-        <ThemedText type="title" style={{}}>
-          {t("pdfsTitle")}
-        </ThemedText>
-        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+        {!searchVisible ? (
+          <ThemedText type="title" style={{}}>
+            {t("pdfsTitle")}
+          </ThemedText>
+        ) : null}
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
           {!searchVisible && (
             <TouchableOpacity style={styles.headerIconBtn} onPress={openSearch}>
               <Ionicons
@@ -416,28 +425,28 @@ export default function AllPdfsScreen() {
               </TouchableOpacity>
             </View>
           )}
-        </View>
-        
-        <TouchableOpacity
-          style={styles.headerIconBtn}
-          onPress={() => setFilterVisible(true)}
-        >
-          <Ionicons
-            name="options-outline"
-            size={22}
-            color={
-              activeFilterCount > 0
-                ? Colors.universal.primary
-                : Colors[colorScheme].text
-            }
-          />
 
-          {activeFilterCount > 0 && (
-            <View style={styles.filterBadge}>
-              <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
-            </View>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerIconBtn}
+            onPress={() => setFilterVisible(true)}
+          >
+            <Ionicons
+              name="options-outline"
+              size={22}
+              color={
+                activeFilterCount > 0
+                  ? Colors.universal.primary
+                  : Colors[colorScheme].text
+              }
+            />
+
+            {activeFilterCount > 0 && (
+              <View style={styles.filterBadge}>
+                <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FilterModal
@@ -607,9 +616,10 @@ const styles = StyleSheet.create({
   },
   modernTileTitle: {
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: "700",
     lineHeight: 20,
     letterSpacing: 0.2,
+
   },
   tileFooter: {},
   metaRow: {
@@ -643,3 +653,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+

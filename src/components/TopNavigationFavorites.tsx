@@ -38,18 +38,7 @@ export default function TopNavigationFavorites() {
         title: "",
         icon: require("@/assets/images/qAndAHeaderLogo.png"),
       },
-      // {
-      //   key: "favoritePrayers",
-      //   // title: t("prayerScreenTitle"),
-      //   title: "",
-      //   icon: require("@/assets/images/prayersHeaderLogo.png"),
-      // },
-      // {
-      //   key: "favoriteQuran",
-      //   // title: t("prayerScreenTitle"),
-      //   title: "",
-      //   icon: require("@/assets/images/quranImage.png"),
-      // },
+
       {
         key: "favoritePdfs",
         // title: t("prayerScreenTitle"),

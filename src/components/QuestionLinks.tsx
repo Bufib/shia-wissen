@@ -320,12 +320,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 13,
-
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-
     elevation: 5,
   },
 
@@ -350,17 +348,5 @@ const styles = StyleSheet.create({
   elementText: {
     fontWeight: "bold",
     textAlign: "center",
-  },
-
-  askQuestionButton: {
-    position: "absolute",
-    bottom: 15,
-    right: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    width: 70,
-    height: 70,
-    backgroundColor: Colors.universal.primary,
-    borderRadius: 10,
   },
 });

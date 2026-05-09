@@ -782,13 +782,9 @@ function AppContent() {
                     >
                       <Stack.Screen name="index" />
                       <Stack.Screen name="(tabs)" />
-                      <Stack.Screen name="(addNews)" />
                       <Stack.Screen name="(auth)" />
                       <Stack.Screen name="(displayQuestion)" />
-                      <Stack.Screen name="(newsArticle)" />
-                      <Stack.Screen name="(displayPrayer)" />
                       <Stack.Screen name="(askQuestion)" />
-                      <Stack.Screen name="(podcast)" />
                       <Stack.Screen name="(pdfs)" />
                       <Stack.Screen
                         name="+not-found"

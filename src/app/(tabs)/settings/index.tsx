@@ -91,15 +91,6 @@ const Settings = () => {
     Appearance.setColorScheme(newDarkMode ? "dark" : "light");
   };
 
-  const onSettingsHeaderPress = () => {
-    countRef.current += 1;
-
-    if (countRef.current >= 10 && !isLoggedIn) {
-      countRef.current = 0;
-      router.push("/(auth)/login");
-    }
-  };
-
   return (
     <Animated.View
       onLayout={onLayout}
@@ -116,17 +107,15 @@ const Settings = () => {
         edges={["top", "bottom"]}
       >
         <View style={[styles.header, rtl && styles.rtl]}>
-          <Pressable style={{ flex: 1 }} onPress={onSettingsHeaderPress}>
-            <ThemedText
-              style={[
-                styles.headerTitle,
-                rtl && { textAlign: "right", paddingRight: 15 },
-              ]}
-              type="title"
-            >
-              {t("settings")}
-            </ThemedText>
-          </Pressable>
+          <ThemedText
+            style={[
+              styles.headerTitle,
+              rtl && { textAlign: "right", paddingRight: 15 },
+            ]}
+            type="title"
+          >
+            {t("settings")}
+          </ThemedText>
 
           {isLoggedIn && (
             <Pressable

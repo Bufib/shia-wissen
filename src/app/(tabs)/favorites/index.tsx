@@ -1,8 +1,8 @@
 import React from "react";
 import TopNavigationFavorites from "@/components/TopNavigationFavorites";
 
-const index = () => {
+const Favorites = () => {
   return <TopNavigationFavorites />;
 };
 
-export default index;
+export default Favorites;

@@ -1,4 +1,4 @@
-// src/components/RenderSearchResults.tsx
+// src/components/RenderSearch.tsx
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
@@ -13,11 +13,9 @@ import {
   Text,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { Colors } from "@/constants/Colors";
 import { useLanguage } from "../../contexts/LanguageContext";
 import type { QuestionType } from "@/constants/Types";
-
 import { searchQuestions, type PagedResult } from "../../db/search";
 import { ThemedText } from "./ThemedText";
 import { useTranslation } from "react-i18next";
@@ -31,7 +29,7 @@ type Props = {
   pageSize?: number;
 };
 
-export default function RenderSearchResults({
+export default function RenderSearch({
   onPressQuestion,
   pageSize = 30,
 }: Props) {
@@ -178,8 +176,9 @@ export default function RenderSearchResults({
   );
 
   const ListHeader = (
-    <View>
+    <View style={{flexDirection: "row", }}>
       {/* SEARCH FIELD */}
+
       <View
         style={[
           styles.searchBox,
@@ -201,15 +200,15 @@ export default function RenderSearchResults({
             <ThemedText style={{ fontSize: 18 }}>×</ThemedText>
           </TouchableOpacity>
         )}
+         {query.length === 0 && !isLoading && (
+          <TouchableOpacity onPress={()=>router.back()} style={styles.clearBtn}>
+            <ThemedText style={{ fontSize: 14, color: Colors.universal.primary, fontWeight: 600 }}>{t("cancel")}</ThemedText>
+          </TouchableOpacity>
+        )}
         {isLoading && <LoadingIndicator style={{ marginLeft: 8 }} />}
       </View>
 
-      {/* META LINE */}
-      {canSearch && !isLoading && !error ? (
-        <ThemedText style={styles.meta}>
-          {t("results_count", { count: total })}
-        </ThemedText>
-      ) : null}
+    
     </View>
   );
 
@@ -273,16 +272,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: RADIUS,
     borderWidth: StyleSheet.hairlineWidth,
-    height: 44,
-    marginBottom: 10,
   },
   input: {
     flex: 1,
     fontSize: 16,
+    padding: 10
   },
   clearBtn: {
-    paddingHorizontal: 6,
-    paddingVertical: 4,
   },
   meta: {
     marginTop: 8,
