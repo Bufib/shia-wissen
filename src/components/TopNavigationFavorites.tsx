@@ -8,8 +8,8 @@ import {
 } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
-import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
 import FavoritePdfs from "@/app/(tabs)/favorites/favoritePdfs";
+import { useScreenFadeIn } from "@/hooks/useScreenFadeIn";
 
 const renderScene = SceneMap({
   favoriteQuestions: FavoriteQuestions,

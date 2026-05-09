@@ -197,7 +197,7 @@ import { returnSize } from "../../utils/sizes";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { Entypo, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
+import { useScreenFadeIn } from "@/hooks/useScreenFadeIn";
 
 export default function QuestionLinks() {
   const { width, height } = useWindowDimensions();

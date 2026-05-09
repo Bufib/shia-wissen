@@ -458,7 +458,6 @@ import { LanguageProvider, useLanguage } from "../../contexts/LanguageContext";
 import { useColorScheme } from "../../hooks/useColorScheme";
 import { useConnectionStatus } from "../../hooks/useConnectionStatus";
 import { useDatabaseSync } from "../../hooks/useDatabaseSync";
-import { cleanupCache } from "../../hooks/usePodcasts";
 import { usePushNotifications } from "../../hooks/usePushNotifications";
 import { useAuthStore } from "../../stores/authStore";
 import { useFontSizeStore } from "../../stores/fontSizeStore";
@@ -674,10 +673,6 @@ function AppContent() {
     isDbReady,
     hasInternet,
   ]);
-
-  useEffect(() => {
-    cleanupCache().catch(console.warn);
-  }, []);
 
   useEffect(() => {
     if (expoPushToken) {

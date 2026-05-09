@@ -22,9 +22,9 @@ import { searchQuestions, type PagedResult } from "../../db/search";
 import { ThemedText } from "./ThemedText";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
-import { useScreenFadeIn } from "../../hooks/useScreenFadeIn";
 import { LoadingIndicator } from "./LoadingIndicator";
 import HeaderLeftBackButton from "./HeaderLeftBackButton";
+import { useScreenFadeIn } from "@/hooks/useScreenFadeIn";
 
 type Props = {
   onPressQuestion?: (v: { id: number }) => void;

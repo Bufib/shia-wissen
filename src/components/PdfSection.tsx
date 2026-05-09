@@ -317,10 +317,7 @@ export default function AllPdfsScreen() {
                       ellipsizeMode="tail"
                       style={[
                         styles.topicBadgeText,
-                        { color: Colors[colorScheme].icon,
-                          paddingRight: 20
-                         },
-                        
+                        { color: Colors[colorScheme].icon, paddingRight: 20 },
                       ]}
                     >
                       {parseTopics((item as any).pdf_topic).join(", ")}
@@ -347,72 +344,80 @@ export default function AllPdfsScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-        {!searchVisible && (
-          <TouchableOpacity style={styles.headerIconBtn} onPress={openSearch}>
-            <Ionicons
-              name="search-outline"
-              size={22}
-              color={
-                isSearching
-                  ? Colors.universal.primary
-                  : Colors[colorScheme].text
-              }
-            />
-          </TouchableOpacity>
-        )}
-
-        {searchVisible && (
-          <View
-            style={[
-              styles.searchBar,
-              {
-                backgroundColor: Colors[colorScheme].contrast,
-                borderColor: Colors[colorScheme].border,
-              },
-            ]}
-          >
-            <Ionicons
-              name="search"
-              size={18}
-              color={Colors[colorScheme].icon}
-              style={styles.searchIcon}
-            />
-
-            <TextInput
-              ref={searchInputRef}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder={t("placeholder_pdfs")}
-              placeholderTextColor={Colors[colorScheme].icon}
-              autoCapitalize="none"
-              autoCorrect={false}
-              returnKeyType="done"
-              style={[styles.searchInput, { color: Colors[colorScheme].text }]}
-            />
-
-            {searchQuery.length > 0 && !searchFetching && (
-              <TouchableOpacity
-                onPress={() => setSearchQuery("")}
-                style={styles.clearBtn}
-              >
-                <Ionicons
-                  name="close-circle"
-                  size={18}
-                  color={Colors[colorScheme].icon}
-                />
-              </TouchableOpacity>
-            )}
-
-            <TouchableOpacity onPress={closeSearch} style={styles.cancelBtn}>
-              <Text
-                style={{ color: Colors.universal.primary, fontWeight: "600" }}
-              >
-                {t("cancel")}
-              </Text>
+        <ThemedText type="title" style={{}}>
+          {t("pdfsTitle")}
+        </ThemedText>
+        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+          {!searchVisible && (
+            <TouchableOpacity style={styles.headerIconBtn} onPress={openSearch}>
+              <Ionicons
+                name="search-outline"
+                size={22}
+                color={
+                  isSearching
+                    ? Colors.universal.primary
+                    : Colors[colorScheme].text
+                }
+              />
             </TouchableOpacity>
-          </View>
-        )}
+          )}
 
+          {searchVisible && (
+            <View
+              style={[
+                styles.searchBar,
+                {
+                  backgroundColor: Colors[colorScheme].contrast,
+                  borderColor: Colors[colorScheme].border,
+                },
+              ]}
+            >
+              <Ionicons
+                name="search"
+                size={18}
+                color={Colors[colorScheme].icon}
+                style={styles.searchIcon}
+              />
+
+              <TextInput
+                ref={searchInputRef}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder={t("placeholder_pdfs")}
+                placeholderTextColor={Colors[colorScheme].icon}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="done"
+                style={[
+                  styles.searchInput,
+                  { color: Colors[colorScheme].text },
+                ]}
+              />
+
+              {searchQuery.length > 0 && !searchFetching && (
+                <TouchableOpacity
+                  onPress={() => setSearchQuery("")}
+                  style={styles.clearBtn}
+                >
+                  <Ionicons
+                    name="close-circle"
+                    size={18}
+                    color={Colors[colorScheme].icon}
+                  />
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity onPress={closeSearch} style={styles.cancelBtn}>
+                <Text
+                  style={{ color: Colors.universal.primary, fontWeight: "600" }}
+                >
+                  {t("cancel")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        
         <TouchableOpacity
           style={styles.headerIconBtn}
           onPress={() => setFilterVisible(true)}
@@ -497,7 +502,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     height: 47,
     marginBottom: 10,
-    justifyContent: "flex-end"
+    justifyContent: "space-between",
   },
 
   headerIconBtn: {

@@ -1,10 +1,11 @@
 import { Colors } from "@/constants/Colors";
-import { useScreenFadeIn } from "../../../../hooks/useScreenFadeIn";
 import React from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import QuestionLinks from "@/components/QuestionLinks";
 import LatestQuestions from "@/components/LatestQuestions";
+import { useScreenFadeIn } from "@/hooks/useScreenFadeIn";
+
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme() ?? "light";

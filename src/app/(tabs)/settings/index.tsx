@@ -31,9 +31,9 @@ import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { HardResetButton } from "@/components/HardResetButton";
 import { useDataVersionStore } from "../../../../stores/dataVersionStore";
-import { useScreenFadeIn } from "../../../../hooks/useScreenFadeIn";
 import ClearAppCacheButton from "@/components/ClearCacheButton";
 import FeedbackButton from "@/components/FeedbackButton";
+import { useScreenFadeIn } from "@/hooks/useScreenFadeIn";
 
 const Settings = () => {
   const colorScheme = useColorScheme() || "light";
