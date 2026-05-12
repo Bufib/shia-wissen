@@ -483,7 +483,6 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { MenuProvider } from "react-native-popup-menu";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDatabase } from "../../db";
@@ -519,9 +518,6 @@ function RetryMigrationScreen({
   colorScheme: "light" | "dark";
   onFirstLayout?: () => void;
 }) {
-  const fg = colorScheme === "dark" ? Colors.dark.text : Colors.light.text;
-  const bg =
-    colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
   const { t } = useTranslation();
 
   return (
@@ -529,7 +525,7 @@ function RetryMigrationScreen({
       onLayout={() => onFirstLayout?.()}
       style={{
         flex: 1,
-        backgroundColor: bg,
+        backgroundColor: Colors[colorScheme].background,
         justifyContent: "center",
         alignItems: "center",
         padding: 24,
@@ -540,7 +536,7 @@ function RetryMigrationScreen({
         style={{
           fontSize: 26,
           fontWeight: "700",
-          color: fg,
+          color: Colors[colorScheme].text,
           textAlign: "center",
         }}
       >
@@ -548,7 +544,12 @@ function RetryMigrationScreen({
       </Text>
 
       <Text
-        style={{ fontSize: 14, color: fg, opacity: 0.8, textAlign: "center" }}
+        style={{
+          fontSize: 14,
+          color: Colors[colorScheme].text,
+          opacity: 0.8,
+          textAlign: "center",
+        }}
       >
         {message}
       </Text>
@@ -721,16 +722,12 @@ function AppContent() {
   if (!essentialsReady) return null;
 
   if (shouldShowDbLoadingScreen) {
-    const fg = colorScheme === "dark" ? Colors.dark.text : Colors.light.text;
-    const bg =
-      colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
-
     return (
       <View
         onLayout={hideSplashOnFirstVisibleLayout}
         style={{
           flex: 1,
-          backgroundColor: bg,
+          backgroundColor: Colors[colorScheme].background,
           justifyContent: "center",
           alignItems: "center",
           padding: 20,
@@ -740,7 +737,7 @@ function AppContent() {
         <Text
           style={{
             fontSize: 28,
-            color: fg,
+            color: Colors[colorScheme].text,
             fontWeight: "700",
             textAlign: "center",
           }}
@@ -750,7 +747,13 @@ function AppContent() {
 
         <LoadingIndicator size={"large"} />
 
-        <Text style={{ fontSize: 16, textAlign: "center", color: fg }}>
+        <Text
+          style={{
+            fontSize: 16,
+            textAlign: "center",
+            color: Colors[colorScheme].text,
+          }}
+        >
           {t("dataIsBeingLoadedMessage")}
         </Text>
 
@@ -769,35 +772,31 @@ function AppContent() {
         >
           <StatusBar style="auto" />
           <ReMountManager>
-            <MenuProvider>
-              <NoInternet showUI={!hasInternet} showToast={true} />
-              <QueryClientProvider client={queryClient}>
-                <SupabaseRealtimeProvider>
-                  <BottomSheetModalProvider>
-                    <Stack
-                      screenOptions={{
-                        headerShown: false,
-                        headerBackButtonMenuEnabled: false,
-                      }}
-                    >
-                      <Stack.Screen name="index" />
-                      <Stack.Screen name="(tabs)" />
-                      <Stack.Screen name="(auth)" />
-                      <Stack.Screen name="(displayQuestion)" />
-                      <Stack.Screen name="(askQuestion)" />
-                      <Stack.Screen name="(pdfs)" />
-                      <Stack.Screen
-                        name="+not-found"
-                        options={{ headerShown: true }}
-                      />
-                    </Stack>
-
-                    <AppReviewPrompt />
-                  </BottomSheetModalProvider>
-                </SupabaseRealtimeProvider>
-              </QueryClientProvider>
-            </MenuProvider>
-
+            <NoInternet showUI={!hasInternet} showToast={true} />
+            <QueryClientProvider client={queryClient}>
+              <SupabaseRealtimeProvider>
+                <BottomSheetModalProvider>
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                      headerBackButtonMenuEnabled: false,
+                    }}
+                  >
+                    <Stack.Screen name="index" />
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="(auth)" />
+                    <Stack.Screen name="(displayQuestion)" />
+                    <Stack.Screen name="(askQuestion)" />
+                    <Stack.Screen name="(pdfs)" />
+                    <Stack.Screen
+                      name="+not-found"
+                      options={{ headerShown: true }}
+                    />
+                  </Stack>
+                  <AppReviewPrompt />
+                </BottomSheetModalProvider>
+              </SupabaseRealtimeProvider>
+            </QueryClientProvider>
             <Toast />
           </ReMountManager>
         </ThemeProvider>

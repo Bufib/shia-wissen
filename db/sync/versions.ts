@@ -9,9 +9,7 @@ export async function fetchVersionFromSupabase(): Promise<DatasetVersionsType | 
   try {
     const { data, error } = await supabase
       .from("versions")
-      .select(
-        "question_data_version, quran_data_version, calendar_data_version, prayer_data_version, app_version"
-      )
+      .select("question_data_version, paypal_data_version, app_version")
       .order("id", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -21,13 +19,10 @@ export async function fetchVersionFromSupabase(): Promise<DatasetVersionsType | 
       return null;
     }
 
-    // Normalize and ensure all fields exist
     const row = (data ?? {}) as Partial<DatasetVersionsType>;
     return {
       question_data_version: row.question_data_version ?? null,
-      quran_data_version: row.quran_data_version ?? null,
-      calendar_data_version: row.calendar_data_version ?? null,
-      prayer_data_version: row.prayer_data_version ?? null,
+      paypal_data_version: row.paypal_data_version ?? null,
       app_version: row.app_version ?? null,
     };
   } catch (err) {

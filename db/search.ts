@@ -1,7 +1,6 @@
 import { QuestionType } from "@/constants/Types";
 import { getDatabase } from ".";
 
-/* -------------------------- helpers & types -------------------------- */
 
 export type PagedResult<T> = {
   rows: T[];

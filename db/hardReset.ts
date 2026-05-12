@@ -63,9 +63,6 @@ export async function hardResetAllData(): Promise<void> {
     // 3) Clear version markers + cached PayPal link (so sync runs)
     const exactKeys = [
       "question_data_version",
-      "quran_data_version",
-      "calendar_data_version",
-      "prayer_data_version",
       "paypal_data_version",
       "paypal", // cached link itself
     ];

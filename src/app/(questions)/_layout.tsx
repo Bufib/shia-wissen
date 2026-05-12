@@ -22,7 +22,7 @@ const Layout = () => {
                 onPress={() =>
                   router.canGoBack()
                     ? router.back()
-                    : router.replace("/(tabs)/knowledge")
+                    : router.replace("/(tabs)/home")
                 }
                 hitSlop={10}
                 style={({ pressed }) => ({})}

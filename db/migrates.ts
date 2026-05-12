@@ -2,9 +2,8 @@
 import type { SQLiteDatabase } from "expo-sqlite";
 import { migrationSQL } from "./migrations";
 
-export const DB_NAME = "bufib.db";
-export const SCHEMA_VERSION = 1; // bump when you change the schema
-
+export const DB_NAME = "islam-fragen.db";
+export const SCHEMA_VERSION = 1; 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   // Safe to repeat even if also inside migrationSQL
   await db.execAsync(`

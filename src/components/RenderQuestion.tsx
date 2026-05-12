@@ -8,18 +8,17 @@
 // import React, { useRef, useState, useEffect } from "react";
 // import { Collapsible } from "@/components/Collapsible";
 // import { ThemedText } from "@/components/ThemedText";
-// import { ThemedView } from "@/components/ThemedView";
 // import { getQuestion, getRelatedQuestions } from "../../db/queries/questions";
-// import { useFontSizeStore } from "../../stores/fontSizeStore";
 // import * as Clipboard from "expo-clipboard";
 // import Feather from "@expo/vector-icons/Feather";
-// import Markdown from "react-native-markdown-display";
 // import { QuestionType } from "@/constants/Types";
 // import { useTranslation } from "react-i18next";
 // import { Colors } from "@/constants/Colors";
 // import { useLanguage } from "../../contexts/LanguageContext";
 // import { router } from "expo-router";
 // import { Ionicons } from "@expo/vector-icons";
+// import { RichText } from "./RichText";
+
 // type RenderQuestionProps = {
 //   category: string;
 //   subcategory: string;
@@ -31,8 +30,6 @@
 //   subcategory,
 //   questionId,
 // }: RenderQuestionProps) => {
-//   // const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
-//   // const [isLoadingRelated, setIsLoadingRelated] = useState(true);
 //   const [question, setQuestion] = useState<QuestionType | null>(null);
 //   const [relatedQuestions, setRelatedQuestions] = useState<
 //     QuestionType[] | null
@@ -44,11 +41,8 @@
 //   const { t } = useTranslation();
 //   const { lang } = useLanguage();
 //   const timeoutsRef = useRef<number[]>([]);
-//   const { getFontSize, getLineHeight } = useFontSizeStore();
 
-//   const baseText = {
-//     color: Colors[colorScheme].text,
-//   } as const;
+//   const contentTextType = lang === "ar" ? "arabic" : "latin";
 
 //   useEffect(() => {
 //     let cancelled = false;
@@ -58,17 +52,13 @@
 //         setQuestion(null);
 //         return;
 //       }
-//       try {
-//         // setIsLoadingQuestions(true);
-//         console.log(category, subcategory, questionId);
 
+//       try {
 //         const q = await getQuestion(category, subcategory, questionId, lang);
 //         if (!cancelled) setQuestion(q ?? null);
 //       } catch (err) {
 //         console.error("Error loading question:", err);
 //         if (!cancelled) setQuestion(null);
-//       } finally {
-//         // if (!cancelled) setIsLoadingQuestions(false);
 //       }
 //     })();
 
@@ -77,20 +67,16 @@
 //     };
 //   }, [category, subcategory, questionId, lang]);
 
-//   // 2) Load related questions
 //   useEffect(() => {
 //     let cancelled = false;
 
 //     (async () => {
 //       try {
-//         // setIsLoadingRelated(true);
 //         const rel = await getRelatedQuestions(questionId, lang);
 //         if (!cancelled) setRelatedQuestions(rel ?? null);
 //       } catch (err) {
 //         console.error("Error loading related questions:", err);
 //         if (!cancelled) setRelatedQuestions(null);
-//       } finally {
-//         // if (!cancelled) setIsLoadingRelated(false);
 //       }
 //     })();
 
@@ -103,42 +89,30 @@
 //     answer: string | undefined,
 //     marja: string,
 //   ) => {
-//     if (answer) {
-//       if (marja === "khamenei") {
-//         await Clipboard.setStringAsync(
-//           `Gemäß der Ansicht von Sayid Khamenei: ${answer}`,
-//         );
-//       } else {
-//         await Clipboard.setStringAsync(
-//           `Gemäß der Ansicht von Sayid Sistani: ${answer}`,
-//         );
-//       }
-//     } else {
+//     if (!answer) {
 //       console.warn("No text to copy");
+//       return;
+//     }
+
+//     if (marja === "khamenei") {
+//       await Clipboard.setStringAsync(
+//         `Gemäß der Ansicht von Sayid Khamenei: ${answer}`,
+//       );
+//     } else {
+//       await Clipboard.setStringAsync(
+//         `Gemäß der Ansicht von Sayid Sistani: ${answer}`,
+//       );
 //     }
 //   };
 
 //   const copyToClipboardSingleAnswer = async (answer: string | undefined) => {
-//     if (answer) {
-//       await Clipboard.setStringAsync(answer);
-//     } else {
+//     if (!answer) {
 //       console.warn("No text to copy");
+//       return;
 //     }
-//   };
 
-//   // const copyIconChangeMarja = (marja: string) => {
-//   //   if (marja === "khamenei") {
-//   //     setHasCopiedKhamenei(true);
-//   //     setTimeout(() => {
-//   //       setHasCopiedKhamenei(false);
-//   //     }, 1000);
-//   //   } else {
-//   //     setHasCopiedSistani(true);
-//   //     setTimeout(() => {
-//   //       setHasCopiedSistani(false);
-//   //     }, 1000);
-//   //   }
-//   // };
+//     await Clipboard.setStringAsync(answer);
+//   };
 
 //   const copyIconChangeMarja = (marja: string) => {
 //     if (marja === "khamenei") {
@@ -156,13 +130,6 @@
 //     }
 //   };
 
-//   // const copyIconChangeSingleAnswer = () => {
-//   //   setHasCopiedSingleAnswer(true);
-//   //   setTimeout(() => {
-//   //     setHasCopiedSingleAnswer(false);
-//   //   }, 1000);
-//   // };
-
 //   const copyIconChangeSingleAnswer = () => {
 //     setHasCopiedSingleAnswer(true);
 //     const id = setTimeout(() => {
@@ -173,7 +140,6 @@
 
 //   useEffect(() => {
 //     return () => {
-//       // clear pending timeouts on unmount
 //       timeoutsRef.current.forEach(clearTimeout);
 //       timeoutsRef.current = [];
 //     };
@@ -187,20 +153,31 @@
 //       ]}
 //     >
 //       <ScrollView
-//         style={[styles.scrollViewStyles, Colors[colorScheme].background]}
+//         style={[
+//           styles.scrollViewStyles,
+//           { backgroundColor: Colors[colorScheme].background },
+//         ]}
 //         contentContainerStyle={styles.scrollViewContent}
 //         showsVerticalScrollIndicator={false}
 //       >
-//         <View style={[styles.questionContainer, {backgroundColor: Colors[colorScheme].contrast}]}>
-//           <ThemedText type="defaultWithFontsize" style={[styles.questionText]}>
+//         <View
+//           style={[
+//             styles.questionContainer,
+//             { backgroundColor: Colors[colorScheme].contrast },
+//           ]}
+//         >
+//           <ThemedText type={contentTextType} style={styles.questionText}>
 //             {question?.question}
 //           </ThemedText>
 //         </View>
 
 //         <View style={styles.answerContainer}>
 //           {question?.answer ? (
-//             <ThemedView
-//               style={[styles.singleAnswer, Colors[colorScheme].contrast]}
+//             <View
+//               style={[
+//                 styles.singleAnswer,
+//                 { backgroundColor: Colors[colorScheme].contrast },
+//               ]}
 //             >
 //               <View style={styles.textIconContainer}>
 //                 {hasCopiedSingleAnswer ? (
@@ -210,7 +187,7 @@
 //                       size={24}
 //                       color={colorScheme === "dark" ? "#fff" : "#000"}
 //                     />
-//                     <ThemedText>{t("copied")}</ThemedText>
+//                     <ThemedText type="default">{t("copied")}</ThemedText>
 //                   </View>
 //                 ) : (
 //                   <Ionicons
@@ -224,19 +201,14 @@
 //                     }}
 //                   />
 //                 )}
-//                 <Markdown
-//                   style={{
-//                     body: {
-//                       ...baseText,
-//                       fontSize: getFontSize("latin"),
-//                       lineHeight: getLineHeight("latin"),
-//                     },
-//                   }}
-//                 >
-//                   {question?.answer || t("loading")}
-//                 </Markdown>
+
+//                 <View style={styles.richTextWrapper}>
+//                   <RichText type={contentTextType}>
+//                     {question?.answer || t("loading")}
+//                   </RichText>
+//                 </View>
 //               </View>
-//             </ThemedView>
+//             </View>
 //           ) : (
 //             <>
 //               <Collapsible title="Sayid al-Khamenei" marja="khamenei">
@@ -248,7 +220,7 @@
 //                         size={24}
 //                         color={colorScheme === "dark" ? "#fff" : "#000"}
 //                       />
-//                       <ThemedText>{t("copied")}</ThemedText>
+//                       <ThemedText type="default">{t("copied")}</ThemedText>
 //                     </View>
 //                   ) : (
 //                     <Ionicons
@@ -265,17 +237,12 @@
 //                       }}
 //                     />
 //                   )}
-//                   <Markdown
-//                     style={{
-//                       body: {
-//                         ...baseText,
-//                         fontSize: getFontSize("latin"),
-//                         lineHeight: getLineHeight("latin"),
-//                       },
-//                     }}
-//                   >
-//                     {question?.answer_khamenei || t("loading")}
-//                   </Markdown>
+
+//                   <View style={styles.richTextWrapper}>
+//                     <RichText type={contentTextType}>
+//                       {question?.answer_khamenei || t("loading")}
+//                     </RichText>
+//                   </View>
 //                 </View>
 //               </Collapsible>
 
@@ -288,7 +255,7 @@
 //                         size={24}
 //                         color={colorScheme === "dark" ? "#fff" : "#000"}
 //                       />
-//                       <ThemedText>{t("copied")}</ThemedText>
+//                       <ThemedText type="default">{t("copied")}</ThemedText>
 //                     </View>
 //                   ) : (
 //                     <Ionicons
@@ -305,48 +272,37 @@
 //                       }}
 //                     />
 //                   )}
-//                   <Markdown
-//                     style={{
-//                       body: {
-//                         ...baseText,
-//                         fontSize: getFontSize("latin"),
-//                         lineHeight: getLineHeight("latin"),
-//                       },
-//                     }}
-//                   >
-//                     {question?.answer_sistani || t("loading")}
-//                   </Markdown>
+
+//                   <View style={styles.richTextWrapper}>
+//                     <RichText type={contentTextType}>
+//                       {question?.answer_sistani || t("loading")}
+//                     </RichText>
+//                   </View>
 //                 </View>
 //               </Collapsible>
 //             </>
 //           )}
 //         </View>
-//         {relatedQuestions && relatedQuestions?.length > 0 && (
-//           <View style={{ gap: 10, marginTop: 20 }}>
-//             <ThemedText type="subtitle" style={{ marginLeft: 15 }}>
+
+//         {relatedQuestions && relatedQuestions.length > 0 && (
+//           <View style={styles.relatedQuestionsSection}>
+//             <ThemedText type="subtitle" style={styles.relatedQuestionsTitle}>
 //               {t("relatedQuestions")}
 //             </ThemedText>
+
 //             <ScrollView
-//               style={{ flex: 1, flexDirection: "row" }}
-//               contentContainerStyle={{
-//                 paddingHorizontal: 16,
-//                 gap: 10,
-//                 flexGrow: 1,
-//               }}
 //               horizontal
 //               showsHorizontalScrollIndicator={false}
+//               contentContainerStyle={styles.relatedQuestionsScrollContent}
 //             >
 //               {relatedQuestions.map((related, index) => (
 //                 <TouchableOpacity
-//                   style={styles.relatedQuestion}
-//                   key={index.toString()}
+//                   style={[
+//                     styles.relatedQuestion,
+//                     { backgroundColor: Colors[colorScheme].contrast },
+//                   ]}
+//                   key={related.id?.toString() ?? index.toString()}
 //                   onPress={() => {
-//                     console.log(
-//                       category,
-//                       subcategory,
-//                       related.id.toString(),
-//                       related.title,
-//                     );
 //                     router.push({
 //                       pathname: "/(displayQuestion)",
 //                       params: {
@@ -359,7 +315,8 @@
 //                   }}
 //                 >
 //                   <ThemedText
-//                     style={{ fontSize: 18, fontWeight: "500" }}
+//                     type={contentTextType}
+//                     style={styles.relatedQuestionText}
 //                     numberOfLines={6}
 //                     ellipsizeMode="tail"
 //                   >
@@ -367,11 +324,8 @@
 //                   </ThemedText>
 
 //                   <ThemedText
-//                     style={{
-//                       fontSize: 16,
-//                       fontWeight: "400",
-//                       alignSelf: "flex-end",
-//                     }}
+//                     type="default"
+//                     style={styles.relatedQuestionIndex}
 //                   >
 //                     {index + 1}
 //                   </ThemedText>
@@ -413,9 +367,12 @@
 //     shadowRadius: 1.41,
 //     elevation: 2,
 //   },
+//   questionText: {
+//     textAlign: "center",
+//   },
+
 //   answerContainer: {
 //     flexDirection: "column",
-//     flex: 3,
 //     gap: 30,
 //     marginHorizontal: 10,
 //     backgroundColor: "transparent",
@@ -433,15 +390,13 @@
 //     shadowOpacity: 0.2,
 //     shadowRadius: 1.41,
 //     elevation: 2,
+//     overflow: "visible",
 //   },
-//   questionText: {
-//     textAlign: "center",
-//   },
-//   answerText: {},
+
 //   textIconContainer: {
 //     flexDirection: "column",
 //     paddingHorizontal: 12,
-//     flexShrink: 1,
+//     width: "100%",
 //   },
 //   hasCopiedContainer: {
 //     flexDirection: "row",
@@ -453,6 +408,25 @@
 //     alignSelf: "flex-end",
 //   },
 
+//   richTextWrapper: {
+//     width: "100%",
+//     alignSelf: "stretch",
+//     minHeight: 1,
+//     marginTop: 8,
+//     overflow: "visible",
+//   },
+
+//   relatedQuestionsSection: {
+//     gap: 10,
+//     marginTop: 20,
+//   },
+//   relatedQuestionsTitle: {
+//     marginLeft: 15,
+//   },
+//   relatedQuestionsScrollContent: {
+//     paddingHorizontal: 16,
+//     gap: 10,
+//   },
 //   relatedQuestion: {
 //     width: 150,
 //     height: 200,
@@ -460,7 +434,6 @@
 //     borderRadius: 10,
 //     padding: 10,
 //     justifyContent: "space-between",
-//     backgroundColor: "#fff",
 //     shadowColor: "#000",
 //     shadowOffset: {
 //       width: 0,
@@ -470,7 +443,14 @@
 //     shadowRadius: 1.41,
 //     elevation: 2,
 //   },
+//   relatedQuestionText: {
+//     fontWeight: "500",
+//   },
+//   relatedQuestionIndex: {
+//     alignSelf: "flex-end",
+//   },
 // });
+
 import {
   StyleSheet,
   View,
@@ -498,24 +478,34 @@ type RenderQuestionProps = {
   questionId: number;
 };
 
+type Marja = "khamenei" | "sistani";
+
 const RenderQuestion = ({
   category,
   subcategory,
   questionId,
 }: RenderQuestionProps) => {
   const [question, setQuestion] = useState<QuestionType | null>(null);
-  const [relatedQuestions, setRelatedQuestions] = useState<QuestionType[] | null>(
-    null,
-  );
+  const [relatedQuestions, setRelatedQuestions] = useState<
+    QuestionType[] | null
+  >(null);
+
   const colorScheme = useColorScheme() || "light";
   const [hasCopiedSingleAnswer, setHasCopiedSingleAnswer] = useState(false);
   const [hasCopiedKhamenei, setHasCopiedKhamenei] = useState(false);
   const [hasCopiedSistani, setHasCopiedSistani] = useState(false);
+
   const { t } = useTranslation();
   const { lang } = useLanguage();
+
   const timeoutsRef = useRef<number[]>([]);
 
   const contentTextType = lang === "ar" ? "arabic" : "latin";
+
+  const hasSingleAnswer = Boolean(question?.answer?.trim());
+  const hasKhameneiAnswer = Boolean(question?.answer_khamenei?.trim());
+  const hasSistaniAnswer = Boolean(question?.answer_sistani?.trim());
+  const hasMarjaAnswers = hasKhameneiAnswer || hasSistaniAnswer;
 
   useEffect(() => {
     let cancelled = false;
@@ -558,43 +548,51 @@ const RenderQuestion = ({
     };
   }, [questionId, lang]);
 
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
+    };
+  }, []);
+
   const copyToClipboardMarja = async (
     answer: string | undefined,
-    marja: string,
+    marja: Marja,
   ) => {
-    if (!answer) {
+    const cleanAnswer = answer?.trim();
+
+    if (!cleanAnswer) {
       console.warn("No text to copy");
       return;
     }
 
-    if (marja === "khamenei") {
-      await Clipboard.setStringAsync(
-        `Gemäß der Ansicht von Sayid Khamenei: ${answer}`,
-      );
-    } else {
-      await Clipboard.setStringAsync(
-        `Gemäß der Ansicht von Sayid Sistani: ${answer}`,
-      );
-    }
+    const prefix =
+      marja === "khamenei"
+        ? "Gemäß der Ansicht von Sayid Khamenei:"
+        : "Gemäß der Ansicht von Sayid Sistani:";
+
+    await Clipboard.setStringAsync(`${prefix} ${cleanAnswer}`);
   };
 
   const copyToClipboardSingleAnswer = async (answer: string | undefined) => {
-    if (!answer) {
+    const cleanAnswer = answer?.trim();
+
+    if (!cleanAnswer) {
       console.warn("No text to copy");
       return;
     }
 
-    await Clipboard.setStringAsync(answer);
+    await Clipboard.setStringAsync(cleanAnswer);
   };
 
-  const copyIconChangeMarja = (marja: string) => {
+  const copyIconChangeMarja = (marja: Marja) => {
     if (marja === "khamenei") {
       setHasCopiedKhamenei(true);
       const id = setTimeout(() => {
         setHasCopiedKhamenei(false);
       }, 1000) as unknown as number;
       timeoutsRef.current.push(id);
-    } else {
+    } else if (marja === "sistani") {
       setHasCopiedSistani(true);
       const id = setTimeout(() => {
         setHasCopiedSistani(false);
@@ -605,18 +603,14 @@ const RenderQuestion = ({
 
   const copyIconChangeSingleAnswer = () => {
     setHasCopiedSingleAnswer(true);
+
     const id = setTimeout(() => {
       setHasCopiedSingleAnswer(false);
     }, 1000) as unknown as number;
+
     timeoutsRef.current.push(id);
   };
 
-  useEffect(() => {
-    return () => {
-      timeoutsRef.current.forEach(clearTimeout);
-      timeoutsRef.current = [];
-    };
-  }, []);
 
   return (
     <View
@@ -639,16 +633,13 @@ const RenderQuestion = ({
             { backgroundColor: Colors[colorScheme].contrast },
           ]}
         >
-          <ThemedText
-            type={contentTextType}
-            style={styles.questionText}
-          >
+          <ThemedText type={contentTextType} style={styles.questionText}>
             {question?.question}
           </ThemedText>
         </View>
 
         <View style={styles.answerContainer}>
-          {question?.answer ? (
+          {hasSingleAnswer ? (
             <View
               style={[
                 styles.singleAnswer,
@@ -680,83 +671,96 @@ const RenderQuestion = ({
 
                 <View style={styles.richTextWrapper}>
                   <RichText type={contentTextType}>
-                    {question?.answer || t("loading")}
+                    {question?.answer ?? ""}
                   </RichText>
                 </View>
               </View>
             </View>
-          ) : (
+          ) : hasMarjaAnswers ? (
             <>
-              <Collapsible title="Sayid al-Khamenei" marja="khamenei">
-                <View style={styles.textIconContainer}>
-                  {hasCopiedKhamenei ? (
-                    <View style={styles.hasCopiedContainer}>
-                      <Feather
-                        name="check"
+              {hasKhameneiAnswer && (
+                <Collapsible title="Sayid al-Khamenei" marja="khamenei">
+                  <View style={styles.textIconContainer}>
+                    {hasCopiedKhamenei ? (
+                      <View style={styles.hasCopiedContainer}>
+                        <Feather
+                          name="check"
+                          size={24}
+                          color={colorScheme === "dark" ? "#fff" : "#000"}
+                        />
+                        <ThemedText type="default">{t("copied")}</ThemedText>
+                      </View>
+                    ) : (
+                      <Ionicons
+                        name="copy-outline"
                         size={24}
                         color={colorScheme === "dark" ? "#fff" : "#000"}
+                        style={styles.copyIcon}
+                        onPress={() => {
+                          copyToClipboardMarja(
+                            question?.answer_khamenei,
+                            "khamenei",
+                          );
+                          copyIconChangeMarja("khamenei");
+                        }}
                       />
-                      <ThemedText type="default">{t("copied")}</ThemedText>
+                    )}
+
+                    <View style={styles.richTextWrapper}>
+                      <RichText type={contentTextType}>
+                        {question?.answer_khamenei ?? ""}
+                      </RichText>
                     </View>
-                  ) : (
-                    <Ionicons
-                      name="copy-outline"
-                      size={24}
-                      color={colorScheme === "dark" ? "#fff" : "#000"}
-                      style={styles.copyIcon}
-                      onPress={() => {
-                        copyToClipboardMarja(
-                          question?.answer_khamenei,
-                          "khamenei",
-                        );
-                        copyIconChangeMarja("khamenei");
-                      }}
-                    />
-                  )}
-
-                  <View style={styles.richTextWrapper}>
-                    <RichText type={contentTextType}>
-                      {question?.answer_khamenei || t("loading")}
-                    </RichText>
                   </View>
-                </View>
-              </Collapsible>
+                </Collapsible>
+              )}
 
-              <Collapsible title="Sayid as-Sistani" marja="sistani">
-                <View style={styles.textIconContainer}>
-                  {hasCopiedSistani ? (
-                    <View style={styles.hasCopiedContainer}>
-                      <Feather
-                        name="check"
+              {hasSistaniAnswer && (
+                <Collapsible title="Sayid as-Sistani" marja="sistani">
+                  <View style={styles.textIconContainer}>
+                    {hasCopiedSistani ? (
+                      <View style={styles.hasCopiedContainer}>
+                        <Feather
+                          name="check"
+                          size={24}
+                          color={colorScheme === "dark" ? "#fff" : "#000"}
+                        />
+                        <ThemedText type="default">{t("copied")}</ThemedText>
+                      </View>
+                    ) : (
+                      <Ionicons
+                        name="copy-outline"
                         size={24}
                         color={colorScheme === "dark" ? "#fff" : "#000"}
+                        style={styles.copyIcon}
+                        onPress={() => {
+                          copyToClipboardMarja(
+                            question?.answer_sistani,
+                            "sistani",
+                          );
+                          copyIconChangeMarja("sistani");
+                        }}
                       />
-                      <ThemedText type="default">{t("copied")}</ThemedText>
-                    </View>
-                  ) : (
-                    <Ionicons
-                      name="copy-outline"
-                      size={24}
-                      color={colorScheme === "dark" ? "#fff" : "#000"}
-                      style={styles.copyIcon}
-                      onPress={() => {
-                        copyToClipboardMarja(
-                          question?.answer_sistani,
-                          "sistani",
-                        );
-                        copyIconChangeMarja("sistani");
-                      }}
-                    />
-                  )}
+                    )}
 
-                  <View style={styles.richTextWrapper}>
-                    <RichText type={contentTextType}>
-                      {question?.answer_sistani || t("loading")}
-                    </RichText>
+                    <View style={styles.richTextWrapper}>
+                      <RichText type={contentTextType}>
+                        {question?.answer_sistani ?? ""}
+                      </RichText>
+                    </View>
                   </View>
-                </View>
-              </Collapsible>
+                </Collapsible>
+              )}
             </>
+          ) : (
+            <View
+              style={[
+                styles.singleAnswer,
+                { backgroundColor: Colors[colorScheme].contrast },
+              ]}
+            >
+              <ThemedText type="default">{t("loading")}</ThemedText>
+            </View>
           )}
         </View>
 
@@ -799,7 +803,10 @@ const RenderQuestion = ({
                     {related.question}
                   </ThemedText>
 
-                  <ThemedText type="default" style={styles.relatedQuestionIndex}>
+                  <ThemedText
+                    type="default"
+                    style={styles.relatedQuestionIndex}
+                  >
                     {index + 1}
                   </ThemedText>
                 </TouchableOpacity>
