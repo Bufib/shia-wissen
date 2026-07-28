@@ -56,15 +56,4 @@ export const migrationSQL = `
   ON questions(language_code, created_at DESC);
 
 
-  -- VIDEOS
-  CREATE TABLE IF NOT EXISTS video_categories (
-  id             INTEGER PRIMARY KEY,
-  created_at     TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  video_category TEXT NOT NULL,
-  language_code  TEXT NOT NULL DEFAULT 'de'
-);
-
-  -- Composite uniqueness per language:
-  CREATE UNIQUE INDEX IF NOT EXISTS uq_video_categories_cat_lang
-  ON video_categories(video_category, language_code);
 `;

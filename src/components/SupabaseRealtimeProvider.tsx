@@ -408,27 +408,27 @@
 
 // export const useSupabaseRealtime = () => useContext(SupabaseRealtimeContext);
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  ReactNode,
-  useCallback,
-} from "react";
-import { supabase } from "../../utils/supabase";
-import { useQueryClient } from "@tanstack/react-query";
-import Toast from "react-native-toast-message";
-import { useAuthStore } from "../../stores/authStore";
+import { userQuestionsNewAnswerForQuestions } from "@/constants/messages";
 import {
   QuestionsFromUserType,
   SupabaseRealtimeContextType,
   WithLangType,
 } from "@/constants/Types";
-import { useTranslation } from "react-i18next";
-import { useDataVersionStore } from "../../stores/dataVersionStore";
-import { userQuestionsNewAnswerForQuestions } from "@/constants/messages";
+import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react";
+import { useTranslation } from "react-i18next";
+import Toast from "react-native-toast-message";
 import { clearAllPdfCaches } from "../../hooks/usePdfs";
+import { useAuthStore } from "../../stores/authStore";
+import { useDataVersionStore } from "../../stores/dataVersionStore";
+import { supabase } from "../../utils/supabase";
 
 const SupabaseRealtimeContext = createContext<SupabaseRealtimeContextType>({
   userId: null,
@@ -443,10 +443,6 @@ export const SupabaseRealtimeProvider = ({
   const session = useAuthStore((state) => state.session);
   const { t } = useTranslation();
   const userId = session?.user?.id ?? null;
-
-  // Stable references to version incrementers
-  const incrementVideoVersion =
-    useDataVersionStore.getState().incrementVideoVersion;
 
   const incrementUserQuestionVersion =
     useDataVersionStore.getState().incrementUserQuestionVersion;
@@ -589,88 +585,6 @@ export const SupabaseRealtimeProvider = ({
       supabase.removeChannel(ch).catch(console.error);
     };
   }, [incrementPdfDataVersion, invalidateByLang, langFromPayload]);
-
-  // ---------- Videos ----------
-  useEffect(() => {
-    const ch = supabase
-      .channel("all_videos_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "videos",
-        },
-        async (payload) => {
-          const lang = langFromPayload(payload);
-
-          if (payload.eventType === "INSERT") {
-            await invalidateByLang("videos", lang);
-            incrementVideoVersion();
-            return;
-          }
-
-          if (payload.eventType === "UPDATE") {
-            await invalidateByLang("videos", lang);
-            incrementVideoVersion();
-            router.push("/home");
-            return;
-          }
-
-          if (payload.eventType === "DELETE") {
-            await invalidateByLang("videos", lang);
-            incrementVideoVersion();
-            router.push("/home");
-          }
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(ch).catch(console.error);
-    };
-  }, [incrementVideoVersion, invalidateByLang, langFromPayload]);
-
-  // ---------- Video Categories ----------
-  useEffect(() => {
-    const ch = supabase
-      .channel("all_video_categories_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "video_categories",
-        },
-        async (payload) => {
-          const lang = langFromPayload(payload);
-
-          if (payload.eventType === "INSERT") {
-            await invalidateByLang("video_categories", lang);
-            incrementVideoVersion();
-            return;
-          }
-
-          if (payload.eventType === "UPDATE") {
-            await invalidateByLang("video_categories", lang);
-            incrementVideoVersion();
-            router.push("/home");
-            return;
-          }
-
-          if (payload.eventType === "DELETE") {
-            await invalidateByLang("video_categories", lang);
-            incrementVideoVersion();
-            router.push("/home");
-          }
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(ch).catch(console.error);
-    };
-  }, [incrementVideoVersion, invalidateByLang, langFromPayload]);
 
   return (
     <SupabaseRealtimeContext.Provider value={{ userId }}>

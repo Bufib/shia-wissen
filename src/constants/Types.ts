@@ -1041,28 +1041,6 @@ export type SearchResultQAType = {
   question: string;
 };
 
-// ─── Videos ─────────────────────────────────────────────────────────────────
-
-export type VideoType = {
-  id: string;
-  title: string;
-  video_category: string;
-  public_id: string;
-  created_at: string;
-  language_code: string;
-};
-
-export type VideoCategoryType = {
-  id: string;
-  video_category: string;
-  language_code: string;
-};
-
-export type UseVideosResultType = {
-  categories: string[];
-  videosByCategory: Record<string, VideoType[]>;
-};
-
 // ─── PDFs ───────────────────────────────────────────────────────────────────
 
 export type PdfType = {

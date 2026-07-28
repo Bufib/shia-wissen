@@ -1,9 +1,9 @@
-import React from "react";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
+import React from "react";
 
 import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useColorScheme } from "react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme() || "light";
@@ -29,22 +29,9 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="videos" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t("videos")}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf="video"
-          md="video_file"
-          renderingMode="template"
-        />
-      </NativeTabs.Trigger>
-
       <NativeTabs.Trigger name="pdfs" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t("pdfsTitle")}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf="book"
-          md="book"
-          renderingMode="template"
-        />
+        <NativeTabs.Trigger.Icon sf="book" md="book" renderingMode="template" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="favorites" disableTransparentOnScrollEdge>

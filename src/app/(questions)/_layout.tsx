@@ -1,7 +1,7 @@
-import { useColorScheme, Pressable } from "react-native";
-import React from "react";
-import { Stack, router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Stack, router } from "expo-router";
+import React from "react";
+import { Pressable, useColorScheme } from "react-native";
 
 const Layout = () => {
   const colorScheme = useColorScheme() || "light";
@@ -30,11 +30,7 @@ const Layout = () => {
                 <Ionicons
                   name="chevron-back-outline"
                   size={30}
-                  color={
-                    colorScheme === "dark"
-                      ? "#fff"
-                      : "#000"
-                  }
+                  color={colorScheme === "dark" ? "#fff" : "#000"}
                   style={{}}
                 />
               </Pressable>
@@ -45,10 +41,6 @@ const Layout = () => {
       <Stack.Screen
         name="questionSubcategories"
         options={{ headerShown: true }}
-      />
-      <Stack.Screen
-        name="questionVideos"
-        options={{ headerShown: true, headerBackVisible: false }}
       />
     </Stack>
   );

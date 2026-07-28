@@ -117,7 +117,6 @@ interface DataVersionStore {
   paypalVersion: number;
   podcastVersion: number;
   newsArticleVersion: number;
-  videoVersion: number;
   userQuestionVersion: number;
   pdfDataVersion: number;
 
@@ -129,7 +128,6 @@ interface DataVersionStore {
   paypalFavoritesVersion: number;
   podcastFavoritesVersion: number;
   newsArticleFavoritesVersion: number;
-  videoFavoritesVersion: number;
   userQuestionFavoritesVersion: number;
   pdfFavoritesVersion: number;
 
@@ -141,7 +139,6 @@ interface DataVersionStore {
   incrementPaypalVersion: () => void;
   incrementPodcastVersion: () => void;
   incrementNewsArticleVersion: () => void;
-  incrementVideoVersion: () => void;
   incrementUserQuestionVersion: () => void;
   incrementPdfDataVersion: () => void;
 
@@ -153,7 +150,6 @@ interface DataVersionStore {
   incrementPaypalFavoritesVersion: () => void;
   incrementPodcastFavoritesVersion: () => void;
   incrementNewsArticleFavoritesVersion: () => void;
-  incrementVideoFavoritesVersion: () => void;
   incrementUserQuestionFavoritesVersion: () => void;
   incrementPdfFavoritesVersion: () => void;
 
@@ -165,7 +161,6 @@ interface DataVersionStore {
   resetPaypalVersion: () => void;
   resetPodcastVersion: () => void;
   resetNewsArticleVersion: () => void;
-  resetVideoVersion: () => void;
   resetUserQuestionVersion: () => void;
   resetPdfDataVersion: () => void;
 
@@ -177,7 +172,6 @@ interface DataVersionStore {
   resetPaypalFavoritesVersion: () => void;
   resetPodcastFavoritesVersion: () => void;
   resetNewsArticleFavoritesVersion: () => void;
-  resetVideoFavoritesVersion: () => void;
   resetUserQuestionFavoritesVersion: () => void;
   resetPdfFavoritesVersion: () => void;
 
@@ -194,7 +188,6 @@ export const useDataVersionStore = create<DataVersionStore>((set) => ({
   paypalVersion: 0,
   podcastVersion: 0,
   newsArticleVersion: 0,
-  videoVersion: 0,
   userQuestionVersion: 0,
   pdfDataVersion: 0,
 
@@ -206,7 +199,6 @@ export const useDataVersionStore = create<DataVersionStore>((set) => ({
   paypalFavoritesVersion: 0,
   podcastFavoritesVersion: 0,
   newsArticleFavoritesVersion: 0,
-  videoFavoritesVersion: 0,
   userQuestionFavoritesVersion: 0,
   pdfFavoritesVersion: 0,
 
@@ -225,8 +217,6 @@ export const useDataVersionStore = create<DataVersionStore>((set) => ({
     set((s) => ({ podcastVersion: s.podcastVersion + 1 })),
   incrementNewsArticleVersion: () =>
     set((s) => ({ newsArticleVersion: s.newsArticleVersion + 1 })),
-  incrementVideoVersion: () =>
-    set((s) => ({ videoVersion: s.videoVersion + 1 })),
   incrementUserQuestionVersion: () =>
     set((s) => ({ userQuestionVersion: s.userQuestionVersion + 1 })),
   incrementPdfDataVersion: () =>
@@ -251,8 +241,6 @@ export const useDataVersionStore = create<DataVersionStore>((set) => ({
     set((s) => ({
       newsArticleFavoritesVersion: s.newsArticleFavoritesVersion + 1,
     })),
-  incrementVideoFavoritesVersion: () =>
-    set((s) => ({ videoFavoritesVersion: s.videoFavoritesVersion + 1 })),
   incrementUserQuestionFavoritesVersion: () =>
     set((s) => ({
       userQuestionFavoritesVersion: s.userQuestionFavoritesVersion + 1,
@@ -268,7 +256,6 @@ export const useDataVersionStore = create<DataVersionStore>((set) => ({
   resetPaypalVersion: () => set({ paypalVersion: 0 }),
   resetPodcastVersion: () => set({ podcastVersion: 0 }),
   resetNewsArticleVersion: () => set({ newsArticleVersion: 0 }),
-  resetVideoVersion: () => set({ videoVersion: 0 }),
   resetUserQuestionVersion: () => set({ userQuestionVersion: 0 }),
   resetPdfDataVersion: () => set({ pdfDataVersion: 0 }),
 
@@ -281,7 +268,6 @@ export const useDataVersionStore = create<DataVersionStore>((set) => ({
   resetPodcastFavoritesVersion: () => set({ podcastFavoritesVersion: 0 }),
   resetNewsArticleFavoritesVersion: () =>
     set({ newsArticleFavoritesVersion: 0 }),
-  resetVideoFavoritesVersion: () => set({ videoFavoritesVersion: 0 }),
   resetUserQuestionFavoritesVersion: () =>
     set({ userQuestionFavoritesVersion: 0 }),
   resetPdfFavoritesVersion: () => set({ pdfFavoritesVersion: 0 }),
@@ -296,7 +282,6 @@ export const useDataVersionStore = create<DataVersionStore>((set) => ({
       paypalVersion: 0,
       podcastVersion: 0,
       newsArticleVersion: 0,
-      videoVersion: 0,
       userQuestionVersion: 0,
       pdfDataVersion: 0,
       questionsFavoritesVersion: 0,
@@ -306,7 +291,6 @@ export const useDataVersionStore = create<DataVersionStore>((set) => ({
       paypalFavoritesVersion: 0,
       podcastFavoritesVersion: 0,
       newsArticleFavoritesVersion: 0,
-      videoFavoritesVersion: 0,
       userQuestionFavoritesVersion: 0,
       pdfFavoritesVersion: 0,
     }),
